@@ -36,6 +36,7 @@ import {
 } from "../ui/select";
 import { buildBorrowPermitParams } from "@/utils/permit";
 import {
+  // TransactionToast,
   useDAppKitWallet,
   useGetErc20Balance,
   useSendTransaction,
@@ -797,6 +798,17 @@ export default function PoolActionDialog({
             </Button>
           )}
         </form>
+
+        {/* <TransactionToast
+                isOpen={isOpen}
+                onClose={close}
+                status={status}
+                txReceipt={txReceipt}
+                txError={error}
+                onTryAgain={handleTryAgain}
+                title= {''},
+                description= {''}
+            /> */}
       </DialogContent>
     </Dialog>
   );
