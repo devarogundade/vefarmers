@@ -8,8 +8,9 @@ import {
   VeChainSigner,
 } from "@vechain/sdk-network";
 import { Hex } from "@vechain/sdk-core";
-import dotenv from "dotenv";
 import { ApiResponse } from "./types";
+import dotenv from "dotenv";
+
 dotenv.config();
 
 const NETWORK_URL = "https://testnet.vechain.org";
@@ -49,6 +50,40 @@ async function mint(
         success: true,
         txId: txResult.id,
         message: "Token minted",
+      };
+    } else {
+      return {
+        success: false,
+        txId: txResult.id,
+        message: "Transaction was reverted",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
+
+async function burn(
+  fiat: string,
+  amount: string,
+  to: string
+): Promise<ApiResponse<string>> {
+  try {
+    const contract = thorClient.contracts.load(fiat, fiatAbi, signer);
+    const txResult = await contract.transact.burn(to, amount);
+
+    const receipt = await txResult.wait();
+
+    if (receipt && !receipt.reverted) {
+      return {
+        success: true,
+        txId: txResult.id,
+        message: "Token burned",
       };
     } else {
       return {
@@ -163,4 +198,4 @@ async function repay(
   }
 }
 
-export { adminAddress, mint, approve, supply, repay };
+export { adminAddress, mint, burn, approve, supply, repay };
