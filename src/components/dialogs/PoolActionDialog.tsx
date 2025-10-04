@@ -143,14 +143,14 @@ export default function PoolActionDialog({
   const IconComponent = config.icon;
 
   const approve = async () => {
-    openTransactionModal();
-
     const contract = thorClient.contracts.load(pool.fiat, fiatAbi);
     const allowance = (
       await contract.read.allowance(account, pool.address)
     )[0] as bigint;
 
     if (Number(formatUnits(allowance, pool.decimals)) >= Number(amount)) return;
+
+    openTransactionModal();
 
     await sendTransaction([
       Clause.callFunction(
