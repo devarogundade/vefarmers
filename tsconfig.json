@@ -1,6 +1,12 @@
 /* Based on https://github.com/tsconfig/bases/blob/501da2bcd640cf95c95805783e1012b992338f28/bases/node22.json */
-{
+{  
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "lib": ["es2023"],
     "module": "node16",
     "target": "es2022",
@@ -8,6 +14,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "node16",
-    "outDir": "dist"
+    "outDir": "dist",
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
+    "allowJs": true,
+    "noUnusedLocals": false,
+    "strictNullChecks": false
   }
 }

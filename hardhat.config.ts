@@ -38,7 +38,7 @@ module.exports = {
       ...(accounts && { accounts }),
       enableDelegation: true,
       gasPayer: {
-        gasPayerServiceUrl: "https://sponsor-testnet.vechain.energy/by/269",
+        gasPayerServiceUrl: "https://sponsor-testnet.vechain.energy/by/940",
       },
     },
     vechain_mainnet: {
