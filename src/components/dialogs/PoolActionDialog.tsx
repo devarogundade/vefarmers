@@ -91,10 +91,11 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
+      toast.loading("Transaction confirmed..", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success(typeof error == "string" ? error : error?.message);
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
 
@@ -109,6 +110,7 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
+      toast.loading("Transaction confirmed..", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
@@ -131,10 +133,11 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
+      toast.loading("Transaction confirmed..", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success(typeof error == "string" ? error : error?.message);
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
 
@@ -153,10 +156,11 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
+      toast.loading("Transaction confirmed..", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success(typeof error == "string" ? error : error?.message);
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
 
@@ -320,6 +324,8 @@ export default function PoolActionDialog({
 
   const mint = async () => {
     try {
+      toast.loading("Minting", { id: "mint" });
+
       const { data } = await apiClient.post("/mint", {
         fiat: pool.fiat,
         account,
@@ -331,9 +337,9 @@ export default function PoolActionDialog({
       if (response.success) {
         refetchFiatBalance();
 
-        toast.success(response.message);
+        toast.success(response.message, { id: "mint" });
       } else {
-        toast.error(response.message);
+        toast.error(response.message, { id: "mint" });
       }
     } catch (error) {
       toast(error?.message);
@@ -406,6 +412,8 @@ export default function PoolActionDialog({
 
     if (action === "withdraw") {
       try {
+        toast.loading("Withdrawing..", { id: action });
+
         await sendWithdrawTransaction([
           Clause.callFunction(
             Address.of(pool.address),
@@ -420,6 +428,8 @@ export default function PoolActionDialog({
         setAmount("");
       }
     } else if (action === "supply") {
+      toast.loading("Supplying..", { id: action });
+
       try {
         await sendSupplyTransaction([
           ...(await approveClause()),
@@ -436,6 +446,8 @@ export default function PoolActionDialog({
         setAmount("");
       }
     } else if (action === "borrow") {
+      toast.loading("Borrowing..", { id: action });
+
       try {
         await sendBorrowTransaction([
           Clause.callFunction(
@@ -451,6 +463,8 @@ export default function PoolActionDialog({
         setAmount("");
       }
     } else if (action === "repay") {
+      toast.loading("Repaying..", { id: action });
+
       try {
         await sendRepayTransaction([
           ...(await approveClause()),
