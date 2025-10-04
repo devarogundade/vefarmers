@@ -45,6 +45,7 @@ import {
 } from "@vechain/vechain-kit";
 import { ABIContract, Address, Clause } from "@vechain/sdk-core";
 import { apiClient } from "@/lib/api";
+import { fiatAbi } from "@/abis/fiat";
 
 interface PoolActionDialogProps {
   pool: Pool;
@@ -144,10 +145,17 @@ export default function PoolActionDialog({
   const approve = async () => {
     openTransactionModal();
 
+    const contract = thorClient.contracts.load(pool.fiat, fiatAbi);
+    const allowance = (
+      await contract.read.allowance(account, pool.address)
+    )[0] as bigint;
+
+    if (Number(formatUnits(allowance, pool.decimals)) >= Number(amount)) return;
+
     await sendTransaction([
       Clause.callFunction(
-        Address.of(pool.address),
-        ABIContract.ofAbi(lendingPoolAbi).getFunction("approve"),
+        Address.of(pool.fiat),
+        ABIContract.ofAbi(fiatAbi).getFunction("approve"),
         [pool.address, parseUnits(amount, pool.decimals)]
       ),
     ]);
@@ -594,7 +602,10 @@ export default function PoolActionDialog({
               <div className="flex justify-between text-sm">
                 <span>Wallet Balance</span>
                 <span className="font-semibold">
-                  {formatUnits(BigInt(fiatBalance?.original), pool.decimals)}
+                  {formatUnits(
+                    BigInt(fiatBalance?.original ?? 0),
+                    pool.decimals
+                  )}
                 </span>
               </div>
             )}
