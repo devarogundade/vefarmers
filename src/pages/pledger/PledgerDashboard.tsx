@@ -15,11 +15,18 @@ import { usePledges } from "@/hooks/usePledges";
 import { Link } from "react-router-dom";
 import { useTimeline } from "@/hooks/useTimeline";
 import { formatDistanceToNow } from "date-fns";
-import { useAccountBalance, useDAppKitWallet } from "@vechain/vechain-kit";
+import {
+  useAccountBalance,
+  useDAppKitWallet,
+  useSendTransaction,
+  useTransactionModal,
+} from "@vechain/vechain-kit";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { thorClient } from "@/utils/constants";
 import { pledgeManagerAbi } from "@/abis/pledgeManager";
-import { formatEther, formatUnits } from "viem";
+import { formatEther } from "viem";
+import { toast } from "sonner";
+import { ABIContract, Address, Clause } from "@vechain/sdk-core";
 
 interface Harvest {
   name: string;
@@ -31,8 +38,18 @@ export default function PledgerDashboard() {
   const { data: balance } = useAccountBalance(account);
   const { pledges, loading, refetch } = usePledges({ pledgerAddress: account });
   const { posts } = useTimeline({ address: account, type: "activity" });
-
   const [harvestable, setHarvestable] = useState<Record<string, Harvest>>({});
+  const { open: openTransactionModal } = useTransactionModal();
+  const { sendTransaction } = useSendTransaction({
+    signerAccountAddress: account,
+    onTxConfirmed: () => {
+      getHarvestable();
+      toast.success("Transaction confirmed", { id: "harvest" });
+    },
+    onTxFailedOrCancelled: (error) => {
+      toast.error(typeof error == "string" ? error : error?.message);
+    },
+  });
 
   const getHarvestable = useCallback(async () => {
     for (const pledge of pledges) {
@@ -86,6 +103,20 @@ export default function PledgerDashboard() {
     ],
     [balance, pledges]
   );
+
+  const harvestRewards = async (address: string) => {
+    openTransactionModal();
+
+    toast.loading("Harvesting..", { id: "harvest" });
+
+    await sendTransaction([
+      Clause.callFunction(
+        Address.of(address),
+        ABIContract.ofAbi(pledgeManagerAbi).getFunction("harvest"),
+        []
+      ),
+    ]);
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -233,7 +264,9 @@ export default function PledgerDashboard() {
                       {harvest.amount.toLocaleString()} B3tr
                     </p>
                   </div>
-                  <Button>Claim</Button>
+                  <Button onClick={() => harvestRewards(pledgeManager)}>
+                    Harvest
+                  </Button>
                 </div>
               );
             })}

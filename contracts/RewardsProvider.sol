@@ -19,6 +19,14 @@ contract RewardsProvider is RewardsProviderInterface {
         rewardsPool = _rewardsPool;
     }
 
+    function distributeReward(
+        address to,
+        uint256 amount,
+        string memory proof
+    ) external {
+        rewardsPool.distributeReward(appId, amount, to, proof);
+    }
+
     function setAppId(bytes32 newAppId) external {
         appId = newAppId;
         emit AppIdChanged(newAppId);

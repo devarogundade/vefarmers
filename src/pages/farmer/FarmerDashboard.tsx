@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useFarmer } from "@/hooks/useFarmers";
 import { usePool } from "@/hooks/usePools";
-import { formatUnits, parseEther } from "viem";
+import { formatEther, formatUnits, parseEther } from "viem";
 import { MAX_BPS_POW, thorClient, Symbols } from "@/utils/constants";
 import { useTimeline } from "@/hooks/useTimeline";
 import { toast } from "sonner";
@@ -49,6 +49,7 @@ export default function FarmerDashboard() {
       toast.error(typeof error == "string" ? error : error?.message);
     },
   });
+
   const stats = [
     {
       title: "Current Loan",
@@ -79,7 +80,7 @@ export default function FarmerDashboard() {
       title: "Total Pledges",
       value: loading
         ? "•••"
-        : `${Number(formatUnits(pool?.totalPledge ?? 0n, 8)).toLocaleString()} VET`,
+        : `${Number(formatEther(pool?.totalPledge ?? 0n)).toLocaleString()} VET`,
       change: "Can be use to secure loans",
       icon: TrendingUp,
       color: "text-primary",

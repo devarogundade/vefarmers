@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Heart, MapPin, Star, Info, Calculator } from "lucide-react";
 import { useFarmer } from "@/hooks/useFarmers";
-import { parseEther } from "viem";
 import { toast } from "sonner";
 import { pledgeManagerAbi } from "@/abis/pledgeManager";
 import pledgesService from "@/services/pledgesService";
@@ -33,7 +32,6 @@ export default function PledgePage() {
   const [pledgeAmount, setPledgeAmount] = useState("");
   const [currency] = useState("VET");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const { farmer, loading } = useFarmer(farmerAddress);
   const { account } = useDAppKitWallet();
   const { open: openTransactionModal } = useTransactionModal();

@@ -162,7 +162,7 @@ export default function PledgeActionDialog({
           Clause.callFunction(
             Address.of(farmer.pledgeManager),
             ABIContract.ofAbi(pledgeManagerAbi).getFunction("withdraw"),
-            [VET.of(amount)]
+            [VET.of(amount).wei]
           ),
         ]);
       } catch (error) {

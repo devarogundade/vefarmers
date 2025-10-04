@@ -8,6 +8,12 @@ interface RewardsProviderInterface {
     event RateChanged(uint256 newRate);
     event RewardsPoolChanged(address newRewardsPool);
 
+    function distributeReward(
+        address to,
+        uint256 amount,
+        string memory proof
+    ) external;
+
     function appId() external view returns (bytes32);
 
     function rate() external view returns (uint256);

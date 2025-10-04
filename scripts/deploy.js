@@ -4,7 +4,7 @@ import { config } from "dotenv";
 config();
 
 const APP_ID = process.env.VEBETTERDAO_APP_ID;
-const RATE = 10_800_000;
+const RATE = 100_800_000_000_000_000_000n;
 const X2EARN_REWARDS_POOL = process.env.X2EARN_REWARDS_POOL;
 
 async function main() {

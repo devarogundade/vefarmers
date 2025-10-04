@@ -41,6 +41,11 @@ contract PledgeManager is
         if (behalfOf == address(0)) revert ZeroAddress();
 
         _mint(behalfOf, msg.value);
+
+        if (lastClaimedAt[msg.sender] == 0) {
+            lastClaimedAt[msg.sender] = block.timestamp;
+        }
+
         emit Pledged(behalfOf, msg.value);
     }
 
@@ -105,12 +110,7 @@ contract PledgeManager is
             )
         );
 
-        provider.rewardsPool().distributeReward(
-            provider.appId(),
-            rewardAmount,
-            msg.sender,
-            proof
-        );
+        provider.distributeReward(msg.sender, rewardAmount, proof);
 
         emit RewardHarvested(msg.sender, rewardAmount);
     }
@@ -147,8 +147,4 @@ contract PledgeManager is
     }
 
     receive() external payable {}
-
-    function decimals() public pure override returns (uint8) {
-        return 8;
-    }
 }
