@@ -16,13 +16,49 @@ import { Link } from "react-router-dom";
 import { useTimeline } from "@/hooks/useTimeline";
 import { formatDistanceToNow } from "date-fns";
 import { useAccountBalance, useDAppKitWallet } from "@vechain/vechain-kit";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { thorClient } from "@/utils/constants";
+import { pledgeManagerAbi } from "@/abis/pledgeManager";
+import { formatEther, formatUnits } from "viem";
+
+interface Harvest {
+  name: string;
+  amount: number;
+}
 
 export default function PledgerDashboard() {
   const { account } = useDAppKitWallet();
   const { data: balance } = useAccountBalance(account);
   const { pledges, loading, refetch } = usePledges({ pledgerAddress: account });
   const { posts } = useTimeline({ address: account, type: "activity" });
+
+  const [harvestable, setHarvestable] = useState<Record<string, Harvest>>({});
+
+  const getHarvestable = useCallback(async () => {
+    for (const pledge of pledges) {
+      const contract = thorClient.contracts.load(
+        pledge.farmer.pledgeManager,
+        pledgeManagerAbi
+      );
+
+      const harvestable = (
+        await contract.read.harvestable(account)
+      )[0] as bigint;
+
+      setHarvestable((prev) => {
+        prev[pledge.farmer.pledgeManager] = {
+          name: pledge.farmer.name,
+          amount: Number(formatEther(harvestable)),
+        };
+
+        return prev;
+      });
+    }
+  }, [account, pledges]);
+
+  useEffect(() => {
+    getHarvestable();
+  }, [getHarvestable]);
 
   const dashboardStats = useMemo(
     () => [
@@ -182,6 +218,29 @@ export default function PledgerDashboard() {
         </Card>
 
         <Card>
+          <CardHeader>
+            <CardTitle>Rewards</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {Object.keys(harvestable).map((pledgeManager) => {
+              const harvest = harvestable[pledgeManager];
+
+              return (
+                <div className="flex  items-center justify-between h-14">
+                  <div className="space-y-1">
+                    <p className="text-sm">{harvest.name} </p>
+                    <p className="text-xs">
+                      {harvest.amount.toLocaleString()} B3tr
+                    </p>
+                  </div>
+                  <Button>Claim</Button>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
           </CardHeader>

@@ -11,7 +11,8 @@
     "test": "npm run build && vitest run --coverage",
     "server": "tsx backend/index.ts",
     "build:contracts": "npx hardhat compile",
-    "deploy:testnet": "npx hardhat run scripts/deploy.js --network vechain_testnet"
+    "deploy:testnet": "npx hardhat run scripts/deploy.js --network vechain_testnet",
+    "set_reward_rate:testnet": "npx hardhat run scripts/set_reward_rate.js --network vechain_testnet"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
