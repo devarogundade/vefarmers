@@ -3,8 +3,11 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 
-export default defineConfig({
-  plugins: [react(), nodePolyfills()],
+export default defineConfig(({ mode }) => ({
+  plugins: [
+    react(),
+    mode === "development" ? undefined : nodePolyfills(),
+  ].filter(Boolean),
   server: {
     port: 3000,
   },
@@ -21,7 +24,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       buffer: "buffer",
       process: "process/browser",
-      // crypto: "crypto-browserify",
       stream: "stream-browserify",
       http: "http-browserify",
       https: "https-browserify",
@@ -44,4 +46,4 @@ export default defineConfig({
       "mersenne-twister",
     ],
   },
-});
+}));
