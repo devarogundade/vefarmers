@@ -236,6 +236,7 @@ export default function PoolActionDialog({
       const response = await apiClient.post("/mint", {
         fiat: pool.fiat,
         account,
+        amount: parseUnits("1000", pool.decimals).toString(),
       });
       if (response.data.success) {
         toast.success(response.data.message);
