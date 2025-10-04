@@ -1,14 +1,16 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), nodePolyfills()],
   server: {
     port: 3000,
   },
   build: {
     minify: false,
+    commonjsOptions: { transformMixedEsModules: true },
   },
   define: {
     global: "globalThis",
