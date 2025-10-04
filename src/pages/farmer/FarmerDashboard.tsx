@@ -40,19 +40,13 @@ export default function FarmerDashboard() {
 
   const [activating, setActivating] = useState(false);
   const { open: openTransactionModal } = useTransactionModal();
-  const {
-    sendTransaction,
-    isTransactionPending,
-    status,
-    error: transactionError,
-    txReceipt,
-  } = useSendTransaction({
+  const { sendTransaction, isTransactionPending } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
       toast.success("Successful");
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success("Failed or cancelled");
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
   const stats = [
@@ -60,7 +54,7 @@ export default function FarmerDashboard() {
       title: "Current Loan",
       value: loading
         ? "•••"
-        : `${Symbols[farmer?.preferredPool]}${Number(formatUnits(pool?.borrow ?? 0n, pool.decimals)).toLocaleString()}`,
+        : `${Symbols[farmer?.preferredPool]}${Number(formatUnits(pool?.borrow ?? 0n, pool?.decimals ?? 0)).toLocaleString()}`,
       change: `Since ${farmer?.createdAt}`,
       icon: DollarSign,
       color: "text-primary",
@@ -244,7 +238,7 @@ export default function FarmerDashboard() {
                 <span className="font-semibold">
                   {Symbols[farmer?.preferredPool]}
                   {Number(
-                    formatUnits(pool?.borrow ?? 0n, pool.decimals)
+                    formatUnits(pool?.borrow ?? 0n, pool?.decimals ?? 0)
                   ).toLocaleString()}
                 </span>
               </div>
@@ -276,7 +270,7 @@ export default function FarmerDashboard() {
                 <span className="font-semibold text-lg">
                   {Symbols[farmer?.preferredPool]}
                   {Number(
-                    formatUnits(pool?.outstanding ?? 0n, pool.decimals)
+                    formatUnits(pool?.outstanding ?? 0n, pool?.decimals ?? 0)
                   ).toLocaleString()}
                 </span>
               </div>

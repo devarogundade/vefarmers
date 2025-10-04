@@ -37,19 +37,19 @@ export default function PledgePage() {
   const { farmer, loading } = useFarmer(farmerAddress);
   const { account } = useDAppKitWallet();
   const { open: openTransactionModal } = useTransactionModal();
-  const {
-    sendTransaction,
-    isTransactionPending,
-    status,
-    error: transactionError,
-    txReceipt,
-  } = useSendTransaction({
+  const { sendTransaction } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      toast.success("Successful");
+      pledgesService.createPledge(account, {
+        farmerAddress: farmerAddress as string,
+        amount: Number(pledgeAmount),
+        currency: "VET",
+      });
+
+      navigate("/pledger/dashboard");
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success("Failed or cancelled");
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
 
@@ -91,14 +91,6 @@ export default function PledgePage() {
           VET.of(pledgeAmount)
         ),
       ]);
-
-      await pledgesService.createPledge(account, {
-        farmerAddress: farmerAddress as string,
-        amount: Number(pledgeAmount),
-        currency: "VET",
-      });
-
-      navigate("/pledger/dashboard");
     } catch (error) {
       toast.error(error?.message);
     } finally {
@@ -247,10 +239,8 @@ export default function PledgePage() {
                         <span className="font-semibold">Loan Collateral</span>
                       </div>
                       <div className="flex justify-between border-t pt-2">
-                        <span>Farmer Incentive</span>
-                        <span className="font-semibold text-primary">
-                          Discount coupon
-                        </span>
+                        <span>Rewards</span>
+                        <span className="font-semibold text-primary">B3tr</span>
                       </div>
                     </div>
                   </CardContent>
@@ -266,7 +256,7 @@ export default function PledgePage() {
                       <li>• VET pledged as collateral for farmer loans</li>
                       <li>• Locked during active loan periods</li>
                       <li>• Withdrawable between seasons</li>
-                      <li>• Farmers may offer produce/incentives</li>
+                      <li>• Farmers may offer incentives in B3tr</li>
                       <li>• No guaranteed financial returns</li>
                     </ul>
                   </div>

@@ -70,7 +70,6 @@ export default function PoolActionDialog({
   const [accountNumber, setAccountNumber] = useState("");
   const [bankCode, setBankCode] = useState<number | undefined>(undefined);
   const [email, setEmail] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [isProcessingWithBank, setIsProcessingWithBank] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { account } = useDAppKitWallet();
@@ -113,7 +112,7 @@ export default function PoolActionDialog({
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success(typeof error == "string" ? error : error?.message);
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
 
@@ -343,8 +342,6 @@ export default function PoolActionDialog({
 
   const borrowWithPermit = async () => {
     try {
-      setIsProcessing(true);
-
       const lendingPool = thorClient.contracts.load(
         pool.address,
         lendingPoolAbi
@@ -397,7 +394,6 @@ export default function PoolActionDialog({
     } catch (error) {
       toast(error?.message);
     } finally {
-      setIsProcessing(false);
       setIsOpen(false);
       setAmount("");
     }
@@ -410,8 +406,6 @@ export default function PoolActionDialog({
 
     if (action === "withdraw") {
       try {
-        setIsProcessing(true);
-
         await sendWithdrawTransaction([
           Clause.callFunction(
             Address.of(pool.address),
@@ -422,14 +416,11 @@ export default function PoolActionDialog({
       } catch (error) {
         toast(error?.message);
       } finally {
-        setIsProcessing(false);
         setIsOpen(false);
         setAmount("");
       }
     } else if (action === "supply") {
       try {
-        setIsProcessing(true);
-
         await sendSupplyTransaction([
           ...(await approveClause()),
           Clause.callFunction(
@@ -441,14 +432,11 @@ export default function PoolActionDialog({
       } catch (error) {
         toast(error?.message);
       } finally {
-        setIsProcessing(false);
         setIsOpen(false);
         setAmount("");
       }
     } else if (action === "borrow") {
       try {
-        setIsProcessing(true);
-
         await sendBorrowTransaction([
           Clause.callFunction(
             Address.of(pool.address),
@@ -459,14 +447,11 @@ export default function PoolActionDialog({
       } catch (error) {
         toast(error?.message);
       } finally {
-        setIsProcessing(false);
         setIsOpen(false);
         setAmount("");
       }
     } else if (action === "repay") {
       try {
-        setIsProcessing(true);
-
         await sendRepayTransaction([
           ...(await approveClause()),
           Clause.callFunction(
@@ -478,7 +463,6 @@ export default function PoolActionDialog({
       } catch (error) {
         toast(error?.message);
       } finally {
-        setIsProcessing(false);
         setIsOpen(false);
         setAmount("");
       }
@@ -648,7 +632,7 @@ export default function PoolActionDialog({
                 </span>
               </div>
             )}
-            {action === "supply" && (
+            {(action === "supply" || action === "repay") && (
               <div className="flex justify-between text-sm">
                 <span>Wallet Balance</span>
                 <span className="font-semibold">
@@ -703,9 +687,21 @@ export default function PoolActionDialog({
             <Button
               type="submit"
               className="w-full"
-              disabled={isProcessing || isProcessingWithBank || !amount}
+              disabled={
+                isSupplyTransactionPending ||
+                isWithdrawTransactionPending ||
+                isBorrowTransactionPending ||
+                isRepayTransactionPending ||
+                isProcessingWithBank ||
+                !amount
+              }
             >
-              {isProcessing ? "Processing..." : `${config.buttonText} `}
+              {isSupplyTransactionPending ||
+              isWithdrawTransactionPending ||
+              isBorrowTransactionPending ||
+              isRepayTransactionPending
+                ? "Processing..."
+                : `${config.buttonText} `}
             </Button>
             {(action === "supply" || action === "repay") && (
               <Button onClick={mint} type="button" variant="outline">
@@ -772,7 +768,14 @@ export default function PoolActionDialog({
               type="button"
               onClick={handlePaystack}
               className="w-full bg-gray-800"
-              disabled={isProcessing || isProcessingWithBank || !amount}
+              disabled={
+                isSupplyTransactionPending ||
+                isWithdrawTransactionPending ||
+                isBorrowTransactionPending ||
+                isRepayTransactionPending ||
+                isProcessingWithBank ||
+                !amount
+              }
             >
               {isProcessingWithBank
                 ? "Processing..."

@@ -50,19 +50,32 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
   const [pool, setPool] = useState<string | undefined>(undefined);
   const { account } = useDAppKitWallet();
   const { open: openTransactionModal } = useTransactionModal();
-  const {
-    sendTransaction,
-    isTransactionPending,
-    status,
-    error: transactionError,
-    txReceipt,
-  } = useSendTransaction({
+  const { sendTransaction } = useSendTransaction({
     signerAccountAddress: account,
-    onTxConfirmed: () => {
-      toast.success("Successful");
+    onTxConfirmed: async () => {
+      const farmerRegistry = thorClient.contracts.load(
+        Contracts.FarmerRegistry,
+        farmerRegistryAbi
+      );
+
+      const pledgeManager = (
+        await farmerRegistry.read.farmerToManager(account)
+      )[0] as string;
+
+      await createFarmer(account, pledgeManager, {
+        name,
+        email,
+        location,
+        farmSize,
+        cropType,
+        description,
+        preferredPool: pool,
+      });
+
+      navigate("/farmer/dashboard");
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success("Failed or cancelled");
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
   const { createFarmer } = useFarmers();
@@ -97,27 +110,6 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
             ]
           ),
         ]);
-
-        const farmerRegistry = thorClient.contracts.load(
-          Contracts.FarmerRegistry,
-          farmerRegistryAbi
-        );
-
-        const pledgeManager = (
-          await farmerRegistry.read.farmerToManager(account)
-        )[0] as string;
-
-        await createFarmer(account, pledgeManager, {
-          name,
-          email,
-          location,
-          farmSize,
-          cropType,
-          description,
-          preferredPool: pool,
-        });
-
-        navigate("/farmer/dashboard");
       } catch (error) {
         console.log(error);
       } finally {

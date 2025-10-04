@@ -47,18 +47,44 @@ export default function PledgeActionDialog({
   const { account } = useDAppKitWallet();
   const { open: openTransactionModal } = useTransactionModal();
   const {
-    sendTransaction,
-    isTransactionPending,
-    status,
-    error: transactionError,
-    txReceipt,
+    sendTransaction: sendPledgeTransaction,
+    isTransactionPending: isPledgeTransactionPending,
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      toast.success("Successful");
+      pledgesService.createPledge(account, {
+        farmerAddress: farmer.address,
+        amount: Number(amount),
+        currency: "VET",
+      });
+
+      setAmount("");
+      setIsOpen(false);
+      onClose();
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success("Failed or cancelled");
+      toast.error(typeof error == "string" ? error : error?.message);
+    },
+  });
+
+  const {
+    sendTransaction: sendWithdrawTransaction,
+    isTransactionPending: isWithdrawTransactionPending,
+  } = useSendTransaction({
+    signerAccountAddress: account,
+    onTxConfirmed: () => {
+      pledgesService.decreasePledge(account, {
+        farmerAddress: farmer.address,
+        amount: Number(amount),
+        currency: "VET",
+      });
+
+      setAmount("");
+      setIsOpen(false);
+      onClose();
+    },
+    onTxFailedOrCancelled: (error) => {
+      toast.error(typeof error == "string" ? error : error?.message);
     },
   });
 
@@ -113,7 +139,7 @@ export default function PledgeActionDialog({
 
         openTransactionModal();
 
-        sendTransaction([
+        sendPledgeTransaction([
           Clause.callFunction(
             Address.of(farmer.pledgeManager),
             ABIContract.ofAbi(pledgeManagerAbi).getFunction("pledge"),
@@ -121,16 +147,6 @@ export default function PledgeActionDialog({
             VET.of(amount)
           ),
         ]);
-
-        await pledgesService.createPledge(account, {
-          farmerAddress: farmer.address,
-          amount: Number(amount),
-          currency: "VET",
-        });
-
-        setAmount("");
-        setIsOpen(false);
-        onClose();
       } catch (error) {
         toast.error(error?.message);
       } finally {
@@ -142,23 +158,13 @@ export default function PledgeActionDialog({
 
         openTransactionModal();
 
-        sendTransaction([
+        sendWithdrawTransaction([
           Clause.callFunction(
             Address.of(farmer.pledgeManager),
             ABIContract.ofAbi(pledgeManagerAbi).getFunction("withdraw"),
             [VET.of(amount)]
           ),
         ]);
-
-        await pledgesService.decreasePledge(account, {
-          farmerAddress: farmer.address,
-          amount: Number(amount),
-          currency: "VET",
-        });
-
-        setAmount("");
-        setIsOpen(false);
-        onClose();
       } catch (error) {
         toast.error(error?.message);
       } finally {
