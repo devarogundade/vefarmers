@@ -208,7 +208,7 @@ export default function PledgerDashboard() {
                       <div>
                         <h4 className="font-semibold">{pledge.farmer.name}</h4>
                         <p className="text-sm text-muted-foreground">
-                          {pledge.farmer.cropType}
+                          {pledge.farmer.location}
                         </p>
                       </div>
                     </div>
@@ -251,7 +251,7 @@ export default function PledgerDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Rewards</CardTitle>
+            <CardTitle>B3TR Rewards</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {Object.keys(harvestable).map((pledgeManager) => {
@@ -262,7 +262,7 @@ export default function PledgerDashboard() {
                   <div className="space-y-1">
                     <p className="text-sm">{harvest.name} </p>
                     <p className="text-xs">
-                      {harvest.amount.toLocaleString()} B3tr
+                      {harvest.amount.toLocaleString()} B3TR
                     </p>
                   </div>
                   <Button onClick={() => harvestRewards(pledgeManager)}>
