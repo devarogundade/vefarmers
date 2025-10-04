@@ -588,7 +588,7 @@ export default function PoolActionDialog({
             {action === "supply" && (
               <div className="flex justify-between text-sm">
                 <span>Wallet Balance</span>
-                <span className="font-semibold">{fiatBalance.formatted}</span>
+                <span className="font-semibold">{fiatBalance?.formatted}</span>
               </div>
             )}
           </div>

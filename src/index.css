@@ -4,8 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* VeFarmers Design System - Clean Web3 Fintech */
-
 @layer base {
   :root {
     /* Core Colors - Black, White, Green */

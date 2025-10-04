@@ -92,14 +92,14 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="py-20 px-6 relative overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img
+          {/* <img
             src={heroImage}
             alt="Farmers working in green fields with modern technology"
-            className="w-full h-full object-cover opacity-10"
-          />
+            className="w-full h-full object-cover"
+          /> */}
           <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-background/70"></div>
         </div>
-        <div className="container mx-auto text-center max-w-4xl relative z-10">
+        <div className="container mx-auto text-center max-w-4xl relative ">
           <div className="fade-in">
             <h1 className="hero-text mb-6">
               Empowering Farmers Through

@@ -41,7 +41,7 @@ export default function PledgerDashboard() {
     },
     {
       title: "Available to Pledge",
-      value: `${Number(formatEther(BigInt(balance?.balance) ?? 0n)).toLocaleString()} VET`,
+      value: `${Number(formatEther(BigInt(balance?.balance ?? 0n))).toLocaleString()} VET`,
       change: "Right in your wallet",
       icon: DollarSign,
       color: "text-success",

@@ -6,8 +6,11 @@ import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
 import { AppLayout } from "./components/Layout/AppLayout";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+import Landing from "./pages/Landing";
 import FarmerDashboard from "./pages/farmer/FarmerDashboard";
 import FarmerTimeline from "./pages/farmer/FarmerTimeline";
 import FarmerProfile from "./pages/farmer/FarmerProfile";
@@ -16,8 +19,6 @@ import PledgerDashboard from "./pages/pledger/PledgerDashboard";
 import FarmersDirectory from "./pages/pledger/FarmersDirectory";
 import PledgePage from "./pages/pledger/PledgePage";
 import NotFound from "./pages/NotFound";
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FB_API_KEY,
