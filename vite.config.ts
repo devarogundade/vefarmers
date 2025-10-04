@@ -3,34 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    // {
-    //   name: "global-polyfill",
-    //   config(config) {
-    //     if (!config.define) config.define = {};
-    //     config.define.global = "globalThis";
-    //   },
-    //   transformIndexHtml(html) {
-    //     return html.replace(
-    //       "<head>",
-    //       `<head>
-    //       <script type="module">
-    //         import { Buffer } from 'buffer';
-    //         import process from 'process';
-    //         window.Buffer = Buffer;
-    //         window.process = process;
-    //         globalThis.Buffer = Buffer;
-    //         globalThis.process = process;
-    //         if (typeof global !== 'undefined') {
-    //           global.Buffer = Buffer;
-    //           global.process = process;
-    //         }
-    //       </script>`
-    //     );
-    //   },
-    // },
-  ],
+  plugins: [react()],
   server: {
     port: 3000,
   },
