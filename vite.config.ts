@@ -46,7 +46,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       buffer: "buffer",
       process: "process/browser",
-      crypto: "crypto-browserify",
+      // crypto: "crypto-browserify",
       stream: "stream-browserify",
       http: "http-browserify",
       https: "https-browserify",
