@@ -24,6 +24,7 @@ contract RewardsProvider is RewardsProviderInterface {
         uint256 amount,
         string memory proof
     ) external {
+        // guard: to do
         rewardsPool.distributeReward(appId, amount, to, proof);
     }
 
