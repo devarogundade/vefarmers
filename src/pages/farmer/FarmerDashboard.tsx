@@ -55,7 +55,7 @@ export default function FarmerDashboard() {
       title: "Current Loan",
       value: loading
         ? "•••"
-        : `${Symbols[farmer?.preferredPool]}${Number(formatUnits(pool?.borrow ?? 0n, pool?.decimals ?? 0)).toLocaleString()}`,
+        : `${Symbols[farmer?.preferredPool]}${Number(formatUnits(pool?.borrow || 0n, pool?.decimals || 0)).toLocaleString()}`,
       change: `Since ${farmer?.createdAt}`,
       icon: DollarSign,
       color: "text-primary",
@@ -80,7 +80,7 @@ export default function FarmerDashboard() {
       title: "Total Pledges",
       value: loading
         ? "•••"
-        : `${Number(formatEther(pool?.totalPledge ?? 0n)).toLocaleString()} VET`,
+        : `${Number(formatEther(pool?.totalPledge || 0n)).toLocaleString()} VET`,
       change: "Can be use to secure loans",
       icon: TrendingUp,
       color: "text-primary",
@@ -239,7 +239,7 @@ export default function FarmerDashboard() {
                 <span className="font-semibold">
                   {Symbols[farmer?.preferredPool]}
                   {Number(
-                    formatUnits(pool?.borrow ?? 0n, pool?.decimals ?? 0)
+                    formatUnits(pool?.borrow || 0n, pool?.decimals || 0)
                   ).toLocaleString()}
                 </span>
               </div>
@@ -249,7 +249,7 @@ export default function FarmerDashboard() {
                 </span>
                 <span className="font-semibold">
                   {Number(
-                    formatUnits(pool?.borrowAPY ?? 0n, MAX_BPS_POW)
+                    formatUnits(pool?.borrowAPY || 0n, MAX_BPS_POW)
                   ).toLocaleString()}
                   % APR
                 </span>
@@ -262,7 +262,7 @@ export default function FarmerDashboard() {
                   {pool?.ltvBps > parseEther("1")
                     ? "Infinity"
                     : Number(
-                        formatUnits(pool?.ltvBps ?? 0n, 0)
+                        formatUnits(pool?.ltvBps || 0n, 0)
                       ).toLocaleString()}
                 </Badge>
               </div>
@@ -271,7 +271,7 @@ export default function FarmerDashboard() {
                 <span className="font-semibold text-lg">
                   {Symbols[farmer?.preferredPool]}
                   {Number(
-                    formatUnits(pool?.outstanding ?? 0n, pool?.decimals ?? 0)
+                    formatUnits(pool?.outstanding || 0n, pool?.decimals || 0)
                   ).toLocaleString()}
                 </span>
               </div>

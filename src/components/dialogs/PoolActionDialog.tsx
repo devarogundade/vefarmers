@@ -527,7 +527,7 @@ export default function PoolActionDialog({
 
       const banks = await response.json();
 
-      setBanks(banks?.data ?? []);
+      setBanks(banks?.data || []);
     } catch (error) {
       console.log(error);
     }
@@ -651,7 +651,7 @@ export default function PoolActionDialog({
                 <span>Wallet Balance</span>
                 <span className="font-semibold">
                   {formatUnits(
-                    BigInt(fiatBalance?.original ?? 0),
+                    BigInt(fiatBalance?.original || 0),
                     pool.decimals
                   )}
                 </span>

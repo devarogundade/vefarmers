@@ -81,7 +81,7 @@ export default function PledgerDashboard() {
     () => [
       {
         title: "Total Pledged",
-        value: `${pledges?.reduce((a, p) => a + p?.amount, 0)?.toLocaleString() || 0} VET`,
+        value: `${pledges?.reduce((a, p) => a + (p?.amount || 0), 0)?.toLocaleString() || 0} VET`,
         change: "Supporting rural farmers",
         icon: Heart,
         color: "text-primary",
@@ -95,7 +95,7 @@ export default function PledgerDashboard() {
       },
       {
         title: "Available to Pledge",
-        value: `${Number(balance?.balance ?? 0n).toLocaleString()} VET`,
+        value: `${Number(balance?.balance || 0n).toLocaleString()} VET`,
         change: "Right in your wallet",
         icon: DollarSign,
         color: "text-success",
@@ -214,14 +214,15 @@ export default function PledgerDashboard() {
                     </div>
                     <div className="text-right">
                       <div className="font-semibold">
-                        {pledge.amount.toLocaleString()} {pledge.currency}
+                        {(pledge?.amount || 0).toLocaleString()}{" "}
+                        {pledge.currency}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <PledgeActionDialog
                         farmer={pledge.farmer}
                         action="withdraw"
-                        currentPledge={Number(pledge.amount)}
+                        currentPledge={Number(pledge.amount || 0)}
                         onClose={() => {
                           refetch();
                         }}
@@ -233,7 +234,7 @@ export default function PledgerDashboard() {
                       <PledgeActionDialog
                         farmer={pledge.farmer}
                         action="increase"
-                        currentPledge={Number(pledge.amount)}
+                        currentPledge={Number(pledge.amount || 0)}
                         onClose={() => {
                           refetch();
                         }}

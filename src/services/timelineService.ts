@@ -82,7 +82,7 @@ export class TimelineService {
             }
           : null,
         content: postData.content,
-        images: postData.images ?? null,
+        images: postData.images || null,
         type: postData.type,
         createdAt: new Date().toISOString(),
         likes: 0,
