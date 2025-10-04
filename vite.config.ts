@@ -39,6 +39,7 @@ export default defineConfig({
       "url",
       "util",
       "os-browserify",
+      "mersenne-twister",
     ],
   },
 });
