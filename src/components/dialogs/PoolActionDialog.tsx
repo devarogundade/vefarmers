@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import Paystack from "@paystack/inline-js";
 import { formatUnits, parseSignature, parseUnits } from "viem";
 import { lendingPoolAbi } from "@/abis/lendingPool";
-import { MAX_BPS_POW, thorClient, Symbols } from "@/utils/constants";
+import { MAX_BPS_POW, thorClient, Symbols, Contracts } from "@/utils/constants";
 import { doc, updateDoc, getFirestore, increment } from "firebase/firestore";
 import timelineService from "@/services/timelineService";
 import {
@@ -46,6 +46,7 @@ import {
 import { ABIContract, Address, Clause } from "@vechain/sdk-core";
 import { apiClient } from "@/lib/api";
 import { fiatAbi } from "@/abis/fiat";
+import { ApiResponse } from "@/types/api";
 
 interface PoolActionDialogProps {
   pool: Pool;
@@ -78,38 +79,98 @@ export default function PoolActionDialog({
     pool.fiat,
     account
   );
+  const db = getFirestore();
+
   const {
-    sendTransaction,
-    isTransactionPending,
-    status,
-    error: transactionError,
-    txReceipt,
+    sendTransaction: sendSupplyTransaction,
+    isTransactionPending: isSupplyTransactionPending,
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      toast.success("Successful");
+      timelineService.createTimelinePost(account, {
+        content: `You supplied ${Symbols[pool.address]}${amount} .`,
+        type: "activity",
+      });
+
+      onClose();
     },
     onTxFailedOrCancelled: (error) => {
-      toast.success("Failed or cancelled");
+      toast.success(typeof error == "string" ? error : error?.message);
     },
   });
+
+  const {
+    sendTransaction: sendWithdrawTransaction,
+    isTransactionPending: isWithdrawTransactionPending,
+  } = useSendTransaction({
+    signerAccountAddress: account,
+    onTxConfirmed: () => {
+      timelineService.createTimelinePost(account, {
+        content: `You withdraw ${Symbols[pool.address]}${amount} .`,
+        type: "activity",
+      });
+
+      onClose();
+    },
+    onTxFailedOrCancelled: (error) => {
+      toast.success(typeof error == "string" ? error : error?.message);
+    },
+  });
+
+  const {
+    sendTransaction: sendRepayTransaction,
+    isTransactionPending: isRepayTransactionPending,
+  } = useSendTransaction({
+    signerAccountAddress: account,
+    onTxConfirmed: () => {
+      updateDoc(doc(db, "farmers", account), {
+        totalRepaid: increment(Number(amount)),
+      });
+
+      timelineService.createTimelinePost(account, {
+        content: `You repaid ${Symbols[pool.address]}${amount}`,
+        type: "activity",
+      });
+
+      onClose();
+    },
+    onTxFailedOrCancelled: (error) => {
+      toast.success(typeof error == "string" ? error : error?.message);
+    },
+  });
+
+  const {
+    sendTransaction: sendBorrowTransaction,
+    isTransactionPending: isBorrowTransactionPending,
+  } = useSendTransaction({
+    signerAccountAddress: account,
+    onTxConfirmed: () => {
+      updateDoc(doc(db, "farmers", account), {
+        totalBorrowed: increment(Number(amount)),
+      });
+
+      timelineService.createTimelinePost(account, {
+        content: `You borrowed ${Symbols[pool.address]}${amount} .`,
+        type: "activity",
+      });
+
+      onClose();
+    },
+    onTxFailedOrCancelled: (error) => {
+      toast.success(typeof error == "string" ? error : error?.message);
+    },
+  });
+
   const { signTypedData } = useSignTypedData();
   const { connection } = useWallet();
-
-  useEffect(() => {
-    if (isTransactionPending) {
-      toast.loading("Transaction pending.", { id: "isTransactionPending" });
-    } else {
-      toast.dismiss("isTransactionPending");
-    }
-  }, [isTransactionPending]);
 
   const actionConfig = {
     supply: {
       title: `Supply ${pool.currency}`,
       description: `Add liquidity to the ${pool.currency} pool and earn interest`,
       buttonText: "Supply",
-      buttonText2: "Supply with Bank",
+      buttonText2:
+        pool.address == Contracts.NGNCPool ? "Supply with Bank" : undefined,
       icon: DollarSign,
       color: "text-green-600",
     },
@@ -117,7 +178,8 @@ export default function PoolActionDialog({
       title: `Borrow ${pool.currency}`,
       description: `Borrow ${pool.currency} against your VET collateral`,
       buttonText: "Borrow",
-      buttonText2: "Borrow to Bank",
+      buttonText2:
+        pool.address == Contracts.NGNCPool ? "Borrow to Bank" : undefined,
       icon: TrendingUp,
       color: "text-blue-600",
     },
@@ -126,14 +188,16 @@ export default function PoolActionDialog({
       description: `Remove your supplied ${pool.currency} from the pool`,
       buttonText: "Withdraw",
       icon: Wallet,
-      buttonText2: "Withdraw to Bank",
+      buttonText2:
+        pool.address == Contracts.NGNCPool ? "Withdraw to Bank" : undefined,
       color: "text-orange-600",
     },
     repay: {
       title: `Repay ${pool.currency}`,
       description: `Repay your borrowed ${pool.currency}`,
       buttonText: "Repay",
-      buttonText2: "Repay with Bank",
+      buttonText2:
+        pool.address == Contracts.NGNCPool ? "Repay with Bank" : undefined,
       icon: AlertTriangle,
       color: "text-red-600",
     },
@@ -142,23 +206,22 @@ export default function PoolActionDialog({
   const config = actionConfig[action];
   const IconComponent = config.icon;
 
-  const approve = async () => {
+  const approveClause = async (): Promise<Clause[]> => {
     const contract = thorClient.contracts.load(pool.fiat, fiatAbi);
     const allowance = (
       await contract.read.allowance(account, pool.address)
     )[0] as bigint;
 
-    if (Number(formatUnits(allowance, pool.decimals)) >= Number(amount)) return;
+    if (Number(formatUnits(allowance, pool.decimals)) >= Number(amount))
+      return [];
 
-    openTransactionModal();
-
-    await sendTransaction([
+    return [
       Clause.callFunction(
         Address.of(pool.fiat),
         ABIContract.ofAbi(fiatAbi).getFunction("approve"),
         [pool.address, parseUnits(amount, pool.decimals)]
       ),
-    ]);
+    ];
   };
 
   const handlePaystack = async () => {
@@ -173,11 +236,12 @@ export default function PoolActionDialog({
     popup.newTransaction({
       key: import.meta.env.VITE_PAYSTACK_PK_KEY,
       email,
-      amount: Number(parseUnits(amount, pool.decimals)),
-      currency: pool.currency,
+      amount: Number(parseUnits(amount, 2)),
+      currency: pool.currency.replace("C", ""),
       metadata: {
         pool: pool.address,
         fiat: pool.fiat,
+        amount: Number(parseUnits(amount, 2)),
         behalfOf: account,
       },
       onSuccess: async (transaction) => {
@@ -187,33 +251,49 @@ export default function PoolActionDialog({
           if (action === "supply") {
             toast.loading("Supplying...", { id: "paystack" });
 
-            const a = await apiClient.post("/supply-on-behalf", {
+            const { data } = await apiClient.post("/supply-on-behalf", {
               reference: transaction.reference,
               provider: "paystack",
             });
 
-            await timelineService.createTimelinePost(account, {
-              content: `You supplied ${Symbols[pool.address]}${amount} from bank.`,
-              type: "activity",
-            });
+            const response: ApiResponse<string> = data;
+
+            if (response.success) {
+              await timelineService.createTimelinePost(account, {
+                content: `You supplied ${Symbols[pool.address]}${amount} from bank.`,
+                type: "activity",
+              });
+
+              toast.success(response.message, { id: "paystack" });
+            } else {
+              toast.error(response.message, { id: "paystack" });
+            }
           } else {
             toast.loading("Repaying...", { id: "paystack" });
 
-            const a = await apiClient.post("/repay-on-behalf", {
+            const { data } = await apiClient.post("/repay-on-behalf", {
               reference: transaction.reference,
               provider: "paystack",
             });
 
-            const db = getFirestore();
+            const response: ApiResponse<string> = data;
 
-            await timelineService.createTimelinePost(account, {
-              content: `You repaid ${Symbols[pool.address]}${amount} from bank.`,
-              type: "activity",
-            });
+            if (response.success) {
+              const db = getFirestore();
 
-            await updateDoc(doc(db, "farmers", account), {
-              totalRepaid: increment(Number(amount)),
-            });
+              await timelineService.createTimelinePost(account, {
+                content: `You repaid ${Symbols[pool.address]}${amount} from bank.`,
+                type: "activity",
+              });
+
+              await updateDoc(doc(db, "farmers", account), {
+                totalRepaid: increment(Number(amount)),
+              });
+
+              toast.success(response.message);
+            } else {
+              toast.error(response.message);
+            }
           }
           toast.success(`Successful!`, { id: "paystack" });
         } else {
@@ -241,16 +321,20 @@ export default function PoolActionDialog({
 
   const mint = async () => {
     try {
-      const response = await apiClient.post("/mint", {
+      const { data } = await apiClient.post("/mint", {
         fiat: pool.fiat,
         account,
         amount: parseUnits("1000", pool.decimals).toString(),
       });
-      if (response.data.success) {
-        toast.success(response.data.message);
+
+      const response: ApiResponse<string> = data;
+
+      if (response.success) {
         refetchFiatBalance();
+
+        toast.success(response.message);
       } else {
-        toast.error(response.data.message);
+        toast.error(response.message);
       }
     } catch (error) {
       toast(error?.message);
@@ -285,26 +369,31 @@ export default function PoolActionDialog({
       const signature = await signTypedData(params);
       const { v, r, s } = parseSignature(signature as `0x${string}`);
 
-      const a = await apiClient.post("/borrow-with-permit", {
+      const { data } = await apiClient.post("/borrow-with-permit", {
         v,
         r,
         s,
         deadline,
       });
 
-      const db = getFirestore();
-      await updateDoc(doc(db, "farmers", account), {
-        totalBorrowed: increment(Number(amount)),
-      });
+      const response: ApiResponse<string> = data;
 
-      await timelineService.createTimelinePost(account, {
-        content: `You borrowed ${Symbols[pool.address]}${amount} to bank.`,
-        type: "activity",
-      });
+      if (response.success) {
+        const db = getFirestore();
+        await updateDoc(doc(db, "farmers", account), {
+          totalBorrowed: increment(Number(amount)),
+        });
 
-      toast.success("Successful", { id: "borrowWithPermit" });
+        await timelineService.createTimelinePost(account, {
+          content: `You borrowed ${Symbols[pool.address]}${amount} to bank.`,
+          type: "activity",
+        });
 
-      onClose();
+        toast.success("Successful", { id: "borrowWithPermit" });
+        onClose();
+      } else {
+        toast.error(response.message);
+      }
     } catch (error) {
       toast(error?.message);
     } finally {
@@ -323,20 +412,13 @@ export default function PoolActionDialog({
       try {
         setIsProcessing(true);
 
-        await sendTransaction([
+        await sendWithdrawTransaction([
           Clause.callFunction(
             Address.of(pool.address),
             ABIContract.ofAbi(lendingPoolAbi).getFunction("withdraw"),
             [parseUnits(amount, pool.decimals)]
           ),
         ]);
-
-        await timelineService.createTimelinePost(account, {
-          content: `You withdraw ${Symbols[pool.address]}${amount} .`,
-          type: "activity",
-        });
-
-        onClose();
       } catch (error) {
         toast(error?.message);
       } finally {
@@ -348,22 +430,14 @@ export default function PoolActionDialog({
       try {
         setIsProcessing(true);
 
-        await approve();
-
-        await sendTransaction([
+        await sendSupplyTransaction([
+          ...(await approveClause()),
           Clause.callFunction(
             Address.of(pool.address),
             ABIContract.ofAbi(lendingPoolAbi).getFunction("supply"),
             [parseUnits(amount, pool.decimals), account]
           ),
         ]);
-
-        await timelineService.createTimelinePost(account, {
-          content: `You supplied ${Symbols[pool.address]}${amount} .`,
-          type: "activity",
-        });
-
-        onClose();
       } catch (error) {
         toast(error?.message);
       } finally {
@@ -375,24 +449,13 @@ export default function PoolActionDialog({
       try {
         setIsProcessing(true);
 
-        await sendTransaction([
+        await sendBorrowTransaction([
           Clause.callFunction(
             Address.of(pool.address),
             ABIContract.ofAbi(lendingPoolAbi).getFunction("borrow"),
             [parseUnits(amount, pool.decimals)]
           ),
         ]);
-        const db = getFirestore();
-        await updateDoc(doc(db, "farmers", account), {
-          totalBorrowed: increment(Number(amount)),
-        });
-
-        await timelineService.createTimelinePost(account, {
-          content: `You borrowed ${Symbols[pool.address]}${amount} .`,
-          type: "activity",
-        });
-
-        onClose();
       } catch (error) {
         toast(error?.message);
       } finally {
@@ -404,27 +467,14 @@ export default function PoolActionDialog({
       try {
         setIsProcessing(true);
 
-        await approve();
-
-        await sendTransaction([
+        await sendRepayTransaction([
+          ...(await approveClause()),
           Clause.callFunction(
             Address.of(pool.address),
             ABIContract.ofAbi(lendingPoolAbi).getFunction("repay"),
             [parseUnits(amount, pool.decimals), account]
           ),
         ]);
-
-        const db = getFirestore();
-        await updateDoc(doc(db, "farmers", account), {
-          totalRepaid: increment(Number(amount)),
-        });
-
-        await timelineService.createTimelinePost(account, {
-          content: `You repaid ${Symbols[pool.address]}${amount}`,
-          type: "activity",
-        });
-
-        onClose();
       } catch (error) {
         toast(error?.message);
       } finally {
@@ -665,7 +715,7 @@ export default function PoolActionDialog({
             )}
           </div>
 
-          <Separator />
+          {config.buttonText2 && <Separator />}
 
           {/* Email Input */}
           {config.buttonText2 &&

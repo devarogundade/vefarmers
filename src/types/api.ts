@@ -1,8 +1,9 @@
 // API Request/Response Types
 export interface ApiResponse<T> {
-  data: T;
   success: boolean;
+  data?: T;
   message?: string;
+  txId?: string;
 }
 
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {

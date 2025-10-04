@@ -7,8 +7,13 @@ import {
   repay,
   supply,
 } from "./src/contract-service";
-
-type Provider = "paystack" | "stripe";
+import {
+  ResolvedRef,
+  MintReq,
+  SupplyReq,
+  Provider,
+  ApiResponse,
+} from "./src/types";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,33 +21,32 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-interface ResolvedRef {
-  pool: string;
-  fiat: string;
-  amount: string;
-  behalfOf: string;
-}
-
-interface MintReq {
-  fiat: string;
-  account: string;
-  amount: string;
-}
-
-interface SupplyReq {
-  reference: string;
-  provider: Provider;
-}
-
 const resolveRef = async (
   reference: string,
   provider: Provider
-): Promise<ResolvedRef> => {
-  if (provider === "paystack") {
-    return { pool: "", fiat: "", amount: "0", behalfOf: "" };
-  }
+): Promise<ResolvedRef | null> => {
+  try {
+    if (provider === "paystack") {
+      const response = await fetch(
+        `https://api.paystack.co/transaction/verify/${reference}`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.PAYSTACK_SK_KEY}`,
+          },
+        }
+      );
 
-  return { pool: "", fiat: "", amount: "0", behalfOf: "" };
+      const data = await response.json();
+      if (!data.status) return null;
+
+      return data.data.metadata as ResolvedRef;
+    }
+
+    return null;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
 
 app.post("/api/mint", async (req: Request, res: Response) => {
@@ -62,32 +66,26 @@ app.post("/api/supply-on-behalf", async (req: Request, res: Response) => {
   try {
     const { reference, provider } = req.body as SupplyReq;
 
-    const resolvedRef = await resolveRef(reference, provider);
+    const ref = await resolveRef(reference, provider);
+    if (!ref) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid reference.",
+      } as ApiResponse<string>);
+    }
 
-    const mintResult = await mint(
-      resolvedRef.fiat,
-      resolvedRef.amount,
-      adminAddress
-    );
+    const mintResult = await mint(ref.fiat, ref.amount, adminAddress);
     if (!mintResult?.success) {
       return res.status(400).send(mintResult);
     }
 
-    const approveResult = await approve(
-      resolvedRef.fiat,
-      resolvedRef.amount,
-      resolvedRef.pool
-    );
+    const approveResult = await approve(ref.fiat, ref.amount, ref.pool);
 
     if (!approveResult?.success) {
       return res.status(400).send(approveResult);
     }
 
-    const supplyResult = await supply(
-      resolvedRef.pool,
-      resolvedRef.amount,
-      resolvedRef.behalfOf
-    );
+    const supplyResult = await supply(ref.pool, ref.amount, ref.behalfOf);
     if (!supplyResult?.success) {
       return res.status(400).send(supplyResult);
     }
@@ -105,32 +103,26 @@ app.post("/api/repay-on-behalf", async (req: Request, res: Response) => {
       provider: Provider;
     };
 
-    const resolvedRef = await resolveRef(reference, provider);
+    const ref = await resolveRef(reference, provider);
+    if (!ref) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid reference.",
+      } as ApiResponse<string>);
+    }
 
-    const mintResult = await mint(
-      resolvedRef.fiat,
-      resolvedRef.amount,
-      adminAddress
-    );
+    const mintResult = await mint(ref.fiat, ref.amount, adminAddress);
     if (!mintResult?.success) {
       return res.status(400).send({});
     }
 
-    const approveResult = await approve(
-      resolvedRef.fiat,
-      resolvedRef.amount,
-      resolvedRef.pool
-    );
+    const approveResult = await approve(ref.fiat, ref.amount, ref.pool);
 
     if (!approveResult?.success) {
       return res.status(400).send(approveResult);
     }
 
-    const repayesult = await repay(
-      resolvedRef.pool,
-      resolvedRef.amount,
-      resolvedRef.behalfOf
-    );
+    const repayesult = await repay(ref.pool, ref.amount, ref.behalfOf);
     if (!repayesult?.success) {
       return res.status(400).send(repayesult);
     }
