@@ -124,9 +124,9 @@ export class PoolsService {
   async getPools(account: string): Promise<ApiResponse<Pool[]>> {
     try {
       const pools = [
-        Contracts.NGNCPool,
         Contracts.USDCPool,
         Contracts.EURCPool,
+        Contracts.NGNCPool,
       ].map((address) => this.loadPool(address, account));
 
       return {
