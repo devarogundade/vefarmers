@@ -103,9 +103,9 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
           farmerRegistryAbi
         );
 
-        const pledgeManager = (await farmerRegistry.read.farmerToManager(
-          account
-        )) as unknown as string;
+        const pledgeManager = (
+          await farmerRegistry.read.farmerToManager(account)
+        )[0] as string;
 
         await createFarmer(account, pledgeManager, {
           name,
@@ -140,9 +140,9 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
           farmerRegistryAbi
         );
 
-        const pledgeManager = (await farmerRegistry.read.farmerToManager(
-          account
-        )) as unknown as string;
+        const pledgeManager = (
+          await farmerRegistry.read.farmerToManager(account)
+        )[0] as string;
 
         if (pledgeManager == zeroAddress) {
           return toast.error("Farmer not found in registry.");

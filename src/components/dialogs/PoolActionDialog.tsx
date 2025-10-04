@@ -257,9 +257,7 @@ export default function PoolActionDialog({
         lendingPoolAbi
       );
 
-      const nonce = (await lendingPool.read.nonces(
-        account
-      )) as unknown as bigint;
+      const nonce = (await lendingPool.read.nonces(account))[0] as bigint;
 
       const nextNonce = Number(nonce) + 1;
       const deadline = Math.ceil(Date.now() / 1_000) + 3_600;
@@ -445,9 +443,9 @@ export default function PoolActionDialog({
         lendingPoolAbi
       );
 
-      const result = (await lendingPool.read.withdrawable(
-        account
-      )) as unknown as bigint;
+      const result = (
+        await lendingPool.read.withdrawable(account)
+      )[0] as bigint;
 
       setBorrowable(
         Number(formatUnits(result, pool.decimals)) -

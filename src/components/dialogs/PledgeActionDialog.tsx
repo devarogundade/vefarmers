@@ -68,8 +68,7 @@ export default function PledgeActionDialog({
       pledgeManagerAbi
     );
 
-    const result =
-      (await pledgeManagerContract.read.active()) as unknown as boolean;
+    const result = (await pledgeManagerContract.read.active())[0] as boolean;
 
     setActive(result);
   }, [farmer]);

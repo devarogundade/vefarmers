@@ -38,9 +38,9 @@ export class PoolsService {
 
     try {
       const [totalLiquidity, totalBorrowed, borrowAPY] = await Promise.all([
-        lendingPool.read.totalSupplied() as unknown as Promise<bigint>,
-        lendingPool.read.totalBorrowed() as unknown as Promise<bigint>,
-        lendingPool.read.borrowRateBp() as unknown as Promise<bigint>,
+        (await lendingPool.read.totalSupplied())[0] as bigint,
+        (await lendingPool.read.totalBorrowed())[0] as bigint,
+        (await lendingPool.read.borrowRateBp())[0] as bigint,
       ]);
 
       const utilizationRate =
@@ -54,17 +54,11 @@ export class PoolsService {
         account == zeroAddress
           ? [0n, [0n, 0n], 0n, 0n, undefined]
           : await Promise.all([
-              lendingPool.read.balanceOf(account) as unknown as Promise<bigint>,
-              lendingPool.read.farmerPositions(account) as unknown as Promise<
-                bigint[]
-              >,
-              lendingPool.read.outstanding(
-                account
-              ) as unknown as Promise<bigint>,
-              lendingPool.read.ltvBps(account) as unknown as Promise<bigint>,
-              farmerRegistry.read.farmerToManager(
-                account
-              ) as unknown as Promise<string>,
+              (await lendingPool.read.balanceOf(account))[0] as bigint,
+              [(await lendingPool.read.farmerPositions(account))[0] as bigint],
+              (await lendingPool.read.outstanding(account))[0] as bigint,
+              (await lendingPool.read.ltvBps(account))[0] as bigint,
+              (await farmerRegistry.read.farmerToManager(account))[0] as string,
             ]);
 
       const pledgeManagerContract = thorClient.contracts.load(
@@ -76,16 +70,14 @@ export class PoolsService {
         pledgeManager == zeroAddress
           ? [0n, false]
           : await Promise.all([
-              pledgeManagerContract.read.totalSupply() as unknown as Promise<bigint>,
-              pledgeManagerContract.read.active() as unknown as Promise<boolean>,
+              (await pledgeManagerContract.read.totalSupply())[0] as bigint,
+              (await pledgeManagerContract.read.active())[0] as boolean,
             ]);
 
       const withdrawable =
         lp === 0n
           ? 0n
-          : ((await lendingPool.read.withdrawable(
-              account
-            )) as unknown as bigint);
+          : ((await lendingPool.read.withdrawable(account))[0] as bigint);
 
       return {
         address,
