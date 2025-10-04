@@ -51,8 +51,6 @@ async function mint(
     const contract = thorClient.contracts.load(fiat, fiatAbi, signer);
     const txResult = await contract.transact.mint(to, amount);
 
-    console.log("Transaction sent:", txResult.id);
-
     const receipt = await txResult.wait();
 
     if (receipt && !receipt.reverted) {
@@ -93,8 +91,6 @@ async function approve(
 
     const contract = thorClient.contracts.load(fiat, fiatAbi, signer);
     const txResult = await contract.transact.approve(spender, amount);
-
-    console.log("Transaction sent:", txResult.id);
 
     const receipt = await txResult.wait();
 
@@ -137,8 +133,6 @@ async function supply(
     const contract = thorClient.contracts.load(pool, lendingPoolAbi, signer);
     const txResult = await contract.transact.supply(amount, behalfOf);
 
-    console.log("Transaction sent:", txResult.id);
-
     const receipt = await txResult.wait();
 
     if (receipt && !receipt.reverted) {
@@ -179,8 +173,6 @@ async function repay(
 
     const contract = thorClient.contracts.load(pool, lendingPoolAbi, signer);
     const txResult = await contract.transact.repay(amount, behalfOf);
-
-    console.log("Transaction sent:", txResult.id);
 
     const receipt = await txResult.wait();
 
