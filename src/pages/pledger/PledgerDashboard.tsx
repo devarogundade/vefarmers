@@ -222,7 +222,7 @@ export default function PledgerDashboard() {
                       <PledgeActionDialog
                         farmer={pledge.farmer}
                         action="withdraw"
-                        currentPledge={Number(pledge.amount || 0)}
+                        currentPledge={Number(pledge?.amount || 0)}
                         onClose={() => {
                           refetch();
                         }}
@@ -234,7 +234,7 @@ export default function PledgerDashboard() {
                       <PledgeActionDialog
                         farmer={pledge.farmer}
                         action="increase"
-                        currentPledge={Number(pledge.amount || 0)}
+                        currentPledge={Number(pledge?.amount || 0)}
                         onClose={() => {
                           refetch();
                         }}
