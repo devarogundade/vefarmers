@@ -21,7 +21,7 @@ import { Sprout, Mail, User, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { farmerRegistryAbi } from "@/abis/farmerRegistry";
-import { Contracts, publicClient } from "@/utils/constants";
+import { Contracts, thorClient } from "@/utils/constants";
 import { useFarmers } from "@/hooks/useFarmers";
 import { toast } from "sonner";
 import farmersService from "@/services/farmersService";
@@ -98,13 +98,14 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
           ),
         ]);
 
-        const pledgeManager = (await publicClient.readContract({
-          abi: farmerRegistryAbi,
-          address: Contracts.FarmerRegistry as `0x${string}`,
-          functionName: "farmerToManager",
-          args: [account as `0x${string}`],
-          authorizationList: undefined,
-        })) as string;
+        const farmerRegistry = thorClient.contracts.load(
+          Contracts.FarmerRegistry,
+          farmerRegistryAbi
+        );
+
+        const pledgeManager = (await farmerRegistry.read.farmerToManager(
+          account
+        )) as unknown as string;
 
         await createFarmer(account, pledgeManager, {
           name,
@@ -134,13 +135,14 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
           return toast.error("Account not found.");
         }
 
-        const pledgeManager = (await publicClient.readContract({
-          abi: farmerRegistryAbi,
-          address: Contracts.FarmerRegistry as `0x${string}`,
-          functionName: "farmerToManager",
-          args: [account as `0x${string}`],
-          authorizationList: undefined,
-        })) as string;
+        const farmerRegistry = thorClient.contracts.load(
+          Contracts.FarmerRegistry,
+          farmerRegistryAbi
+        );
+
+        const pledgeManager = (await farmerRegistry.read.farmerToManager(
+          account
+        )) as unknown as string;
 
         if (pledgeManager == zeroAddress) {
           return toast.error("Farmer not found in registry.");

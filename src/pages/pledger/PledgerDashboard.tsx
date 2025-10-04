@@ -12,41 +12,44 @@ import {
 } from "lucide-react";
 import PledgeActionDialog from "@/components/dialogs/PledgeActionDialog";
 import { usePledges } from "@/hooks/usePledges";
-import { formatEther } from "viem";
 import { Link } from "react-router-dom";
 import { useTimeline } from "@/hooks/useTimeline";
 import { formatDistanceToNow } from "date-fns";
 import { useAccountBalance, useDAppKitWallet } from "@vechain/vechain-kit";
+import { useMemo } from "react";
 
 export default function PledgerDashboard() {
   const { account } = useDAppKitWallet();
-  const { data: balance } = useAccountBalance();
+  const { data: balance } = useAccountBalance(account);
   const { pledges, loading, refetch } = usePledges({ pledgerAddress: account });
   const { posts } = useTimeline({ address: account, type: "activity" });
 
-  const dashboardStats = [
-    {
-      title: "Total Pledged",
-      value: `${pledges?.reduce((a, p) => a + p?.amount, 0)?.toLocaleString() || 0} VET`,
-      change: "Supporting rural farmers",
-      icon: Heart,
-      color: "text-primary",
-    },
-    {
-      title: "Active Pledges",
-      value: pledges?.length || 0,
-      change: "Currently backing farmers",
-      icon: Users,
-      color: "text-primary",
-    },
-    {
-      title: "Available to Pledge",
-      value: `${Number(formatEther(BigInt(balance?.balance ?? 0n))).toLocaleString()} VET`,
-      change: "Right in your wallet",
-      icon: DollarSign,
-      color: "text-success",
-    },
-  ];
+  const dashboardStats = useMemo(
+    () => [
+      {
+        title: "Total Pledged",
+        value: `${pledges?.reduce((a, p) => a + p?.amount, 0)?.toLocaleString() || 0} VET`,
+        change: "Supporting rural farmers",
+        icon: Heart,
+        color: "text-primary",
+      },
+      {
+        title: "Active Pledges",
+        value: pledges?.length || 0,
+        change: "Currently backing farmers",
+        icon: Users,
+        color: "text-primary",
+      },
+      {
+        title: "Available to Pledge",
+        value: `${Number(balance?.balance ?? 0n).toLocaleString()} VET`,
+        change: "Right in your wallet",
+        icon: DollarSign,
+        color: "text-success",
+      },
+    ],
+    [balance, pledges]
+  );
 
   return (
     <div className="p-6 max-w-7xl mx-auto">

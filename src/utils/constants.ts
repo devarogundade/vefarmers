@@ -1,10 +1,6 @@
-import { createPublicClient, http } from "viem";
-import { vechain } from "viem/chains";
+import { ThorClient } from "@vechain/sdk-network";
 
-export const publicClient = createPublicClient({
-  chain: vechain,
-  transport: http(),
-});
+export const thorClient = ThorClient.at("https://testnet.vechain.org");
 
 export const Contracts = {
   USDC: "0x2De3704dd711dD0dd2FE884c839CC4D4E7Dedc58",

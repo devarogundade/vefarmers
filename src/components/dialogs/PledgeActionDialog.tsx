@@ -16,9 +16,8 @@ import { Heart, Plus, Minus, AlertTriangle, Info } from "lucide-react";
 import { Farmer } from "@/types";
 import { toast } from "sonner";
 import { pledgeManagerAbi } from "@/abis/pledgeManager";
-import { parseUnits } from "viem";
 import pledgesService from "@/services/pledgesService";
-import { publicClient } from "@/utils/constants";
+import { thorClient } from "@/utils/constants";
 import {
   useDAppKitWallet,
   useSendTransaction,
@@ -64,12 +63,13 @@ export default function PledgeActionDialog({
   });
 
   const getPledgeStatus = useCallback(async () => {
-    const result = (await publicClient.readContract({
-      abi: pledgeManagerAbi,
-      address: farmer.pledgeManager as `0x${string}`,
-      functionName: "active",
-      authorizationList: undefined,
-    })) as boolean;
+    const pledgeManagerContract = thorClient.contracts.load(
+      farmer.pledgeManager,
+      pledgeManagerAbi
+    );
+
+    const result =
+      (await pledgeManagerContract.read.active()) as unknown as boolean;
 
     setActive(result);
   }, [farmer]);

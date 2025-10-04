@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { farmerRegistryAbi } from "@/abis/farmerRegistry";
 import { lendingPoolAbi } from "@/abis/lendingPool";
 import { pledgeManagerAbi } from "@/abis/pledgeManager";
 import { Pool } from "@/types";
 import { ApiResponse } from "@/types/api";
-import { Contracts, publicClient } from "@/utils/constants";
-import { add } from "date-fns";
+import { Contracts, thorClient } from "@/utils/constants";
 import { zeroAddress } from "viem";
 
 export class PoolsService {
@@ -30,26 +30,17 @@ export class PoolsService {
         decimals = 2;
     }
 
+    const lendingPool = thorClient.contracts.load(address, lendingPoolAbi);
+    const farmerRegistry = thorClient.contracts.load(
+      Contracts.FarmerRegistry,
+      farmerRegistryAbi
+    );
+
     try {
       const [totalLiquidity, totalBorrowed, borrowAPY] = await Promise.all([
-        publicClient.readContract({
-          abi: lendingPoolAbi,
-          address: address as `0x${string}`,
-          functionName: "totalSupplied",
-          authorizationList: undefined,
-        }) as Promise<bigint>,
-        publicClient.readContract({
-          abi: lendingPoolAbi,
-          address: address as `0x${string}`,
-          functionName: "totalBorrowed",
-          authorizationList: undefined,
-        }) as Promise<bigint>,
-        publicClient.readContract({
-          abi: lendingPoolAbi,
-          address: address as `0x${string}`,
-          functionName: "borrowRateBp",
-          authorizationList: undefined,
-        }) as Promise<bigint>,
+        lendingPool.read.totalSupplied() as unknown as Promise<bigint>,
+        lendingPool.read.totalBorrowed() as unknown as Promise<bigint>,
+        lendingPool.read.borrowRateBp() as unknown as Promise<bigint>,
       ]);
 
       const utilizationRate =
@@ -63,71 +54,38 @@ export class PoolsService {
         account == zeroAddress
           ? [0n, [0n, 0n], 0n, 0n, undefined]
           : await Promise.all([
-              publicClient.readContract({
-                abi: lendingPoolAbi,
-                address: address as `0x${string}`,
-                functionName: "balanceOf",
-                args: [account as `0x${string}`],
-                authorizationList: undefined,
-              }) as Promise<bigint>,
-              publicClient.readContract({
-                abi: lendingPoolAbi,
-                address: address as `0x${string}`,
-                functionName: "farmerPositions",
-                args: [account as `0x${string}`],
-                authorizationList: undefined,
-              }) as Promise<readonly [bigint, bigint]>,
-              publicClient.readContract({
-                abi: lendingPoolAbi,
-                address: address as `0x${string}`,
-                functionName: "outstanding",
-                args: [account as `0x${string}`],
-                authorizationList: undefined,
-              }) as Promise<bigint>,
-              publicClient.readContract({
-                abi: lendingPoolAbi,
-                address: address as `0x${string}`,
-                functionName: "ltvBps",
-                args: [account as `0x${string}`],
-                authorizationList: undefined,
-              }) as Promise<bigint>,
-              publicClient.readContract({
-                abi: farmerRegistryAbi,
-                address: Contracts.FarmerRegistry as `0x${string}`,
-                functionName: "farmerToManager",
-                args: [account as `0x${string}`],
-                authorizationList: undefined,
-              }) as Promise<string>,
+              lendingPool.read.balanceOf(account) as unknown as Promise<bigint>,
+              lendingPool.read.farmerPositions(account) as unknown as Promise<
+                bigint[]
+              >,
+              lendingPool.read.outstanding(
+                account
+              ) as unknown as Promise<bigint>,
+              lendingPool.read.ltvBps(account) as unknown as Promise<bigint>,
+              farmerRegistry.read.farmerToManager(
+                account
+              ) as unknown as Promise<string>,
             ]);
+
+      const pledgeManagerContract = thorClient.contracts.load(
+        pledgeManager,
+        pledgeManagerAbi
+      );
 
       const [totalPledge, active] =
         pledgeManager == zeroAddress
           ? [0n, false]
           : await Promise.all([
-              publicClient.readContract({
-                abi: pledgeManagerAbi,
-                address: pledgeManager as `0x${string}`,
-                functionName: "totalSupply",
-                authorizationList: undefined,
-              }) as Promise<bigint>,
-              publicClient.readContract({
-                abi: pledgeManagerAbi,
-                address: pledgeManager as `0x${string}`,
-                functionName: "active",
-                authorizationList: undefined,
-              }) as Promise<boolean>,
+              pledgeManagerContract.read.totalSupply() as unknown as Promise<bigint>,
+              pledgeManagerContract.read.active() as unknown as Promise<boolean>,
             ]);
 
       const withdrawable =
         lp === 0n
           ? 0n
-          : ((await publicClient.readContract({
-              abi: lendingPoolAbi,
-              address: address as `0x${string}`,
-              functionName: "withdrawable",
-              args: [account as `0x${string}`],
-              authorizationList: undefined,
-            })) as bigint);
+          : ((await lendingPool.read.withdrawable(
+              account
+            )) as unknown as bigint);
 
       return {
         address,

@@ -13,7 +13,7 @@ import {
 import { useFarmer } from "@/hooks/useFarmers";
 import { usePool } from "@/hooks/usePools";
 import { formatUnits, parseEther } from "viem";
-import { MAX_BPS_POW, publicClient, Symbols } from "@/utils/constants";
+import { MAX_BPS_POW, thorClient, Symbols } from "@/utils/constants";
 import { useTimeline } from "@/hooks/useTimeline";
 import { toast } from "sonner";
 import { lendingPoolAbi } from "@/abis/lendingPool";

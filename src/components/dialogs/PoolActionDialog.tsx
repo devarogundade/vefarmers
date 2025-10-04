@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import Paystack from "@paystack/inline-js";
 import { formatUnits, parseSignature, parseUnits } from "viem";
 import { lendingPoolAbi } from "@/abis/lendingPool";
-import { MAX_BPS_POW, publicClient, Symbols } from "@/utils/constants";
+import { MAX_BPS_POW, thorClient, Symbols } from "@/utils/constants";
 import { doc, updateDoc, getFirestore, increment } from "firebase/firestore";
 import timelineService from "@/services/timelineService";
 import {
@@ -148,7 +148,7 @@ export default function PoolActionDialog({
       Clause.callFunction(
         Address.of(pool.address),
         ABIContract.ofAbi(lendingPoolAbi).getFunction("approve"),
-        [pool.address, parseUnits(amount, 2)]
+        [pool.address, parseUnits(amount, pool.decimals)]
       ),
     ]);
   };
@@ -165,7 +165,7 @@ export default function PoolActionDialog({
     popup.newTransaction({
       key: import.meta.env.VITE_PAYSTACK_PK_KEY,
       email,
-      amount: Number(parseUnits(amount, 2)),
+      amount: Number(parseUnits(amount, pool.decimals)),
       currency: pool.currency,
       metadata: {
         pool: pool.address,
@@ -252,13 +252,14 @@ export default function PoolActionDialog({
     try {
       setIsProcessing(true);
 
-      const nonce = (await publicClient.readContract({
-        abi: lendingPoolAbi,
-        address: pool.address as `0x${string}`,
-        functionName: "nonces",
-        args: [account as `0x${string}`],
-        authorizationList: undefined,
-      })) as bigint;
+      const lendingPool = thorClient.contracts.load(
+        pool.address,
+        lendingPoolAbi
+      );
+
+      const nonce = (await lendingPool.read.nonces(
+        account
+      )) as unknown as bigint;
 
       const nextNonce = Number(nonce) + 1;
       const deadline = Math.ceil(Date.now() / 1_000) + 3_600;
@@ -269,7 +270,7 @@ export default function PoolActionDialog({
         "LendingPool",
         "1",
         account,
-        parseUnits(amount, 2),
+        parseUnits(amount, pool.decimals),
         nextNonce,
         deadline
       ) as any;
@@ -439,17 +440,18 @@ export default function PoolActionDialog({
   const getBorrowable = useCallback(async () => {
     if (!isOpen) return;
     try {
-      const result = (await publicClient.readContract({
-        abi: lendingPoolAbi,
-        address: pool.address as `0x${string}`,
-        functionName: "borrowable",
-        args: [account as `0x${string}`],
-        authorizationList: undefined,
-      })) as bigint;
+      const lendingPool = thorClient.contracts.load(
+        pool.address,
+        lendingPoolAbi
+      );
+
+      const result = (await lendingPool.read.withdrawable(
+        account
+      )) as unknown as bigint;
 
       setBorrowable(
-        Number(formatUnits(result, 2)) -
-          Number(formatUnits(pool.outstanding, 2))
+        Number(formatUnits(result, pool.decimals)) -
+          Number(formatUnits(pool.outstanding, pool.decimals))
       );
     } catch (error) {
       console.log(error);
@@ -477,9 +479,6 @@ export default function PoolActionDialog({
   }, [pool, isOpen]);
 
   const resolveAccount = useCallback(async () => {
-    console.log(bankCode);
-    console.log(accountNumber);
-
     if (!bankCode || accountNumber.length != 10) {
       return setBankAccount(undefined);
     }
@@ -553,7 +552,10 @@ export default function PoolActionDialog({
                   <span>Available Liquidity</span>
                   <span className="font-semibold">
                     {Number(
-                      formatUnits(pool.totalLiquidity - pool.totalBorrowed, 2)
+                      formatUnits(
+                        pool.totalLiquidity - pool.totalBorrowed,
+                        pool.decimals
+                      )
                     ).toLocaleString()}{" "}
                     {Symbols[pool.address]}
                   </span>
@@ -563,7 +565,9 @@ export default function PoolActionDialog({
               <div className="flex justify-between text-sm">
                 <span>Withdrawble</span>
                 <span className="font-semibold">
-                  {Number(formatUnits(pool.withdrawable, 2)).toLocaleString()}{" "}
+                  {Number(
+                    formatUnits(pool.withdrawable, pool.decimals)
+                  ).toLocaleString()}{" "}
                   {Symbols[pool.address]}
                 </span>
               </div>
@@ -572,7 +576,9 @@ export default function PoolActionDialog({
               <div className="flex justify-between text-sm">
                 <span>Outstanding</span>
                 <span className="font-semibold">
-                  {Number(formatUnits(pool.outstanding, 2)).toLocaleString()}{" "}
+                  {Number(
+                    formatUnits(pool.outstanding, pool.decimals)
+                  ).toLocaleString()}{" "}
                   {Symbols[pool.address]}
                 </span>
               </div>
