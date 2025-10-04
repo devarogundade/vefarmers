@@ -2,6 +2,11 @@ export const pledgeManagerAbi = [
   {
     inputs: [
       {
+        internalType: "contract RewardsProviderInterface",
+        name: "_provider",
+        type: "address",
+      },
+      {
         internalType: "address",
         name: "_farmer",
         type: "address",
@@ -104,6 +109,11 @@ export const pledgeManagerAbi = [
       },
     ],
     name: "ERC20InvalidSpender",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "InsufficientAmount",
     type: "error",
   },
   {
@@ -268,6 +278,25 @@ export const pledgeManagerAbi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "RewardHarvested",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "from",
@@ -302,6 +331,12 @@ export const pledgeManagerAbi = [
         indexed: false,
         internalType: "uint256",
         name: "amount",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "rewards",
         type: "uint256",
       },
     ],
@@ -403,19 +438,63 @@ export const pledgeManagerAbi = [
   },
   {
     inputs: [],
-    name: "emergencyWithdraw",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
     name: "farmer",
     outputs: [
       {
         internalType: "address",
         name: "",
         type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "harvest",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "rewardAmount",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "harvestable",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "lastClaimedAt",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -607,7 +686,13 @@ export const pledgeManagerAbi = [
       },
     ],
     name: "withdraw",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "rewardAmount",
+        type: "uint256",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.20;
 
 // Interface for VeBetterDAO X2EarnRewardsPool
 interface IX2EarnRewardsPool {

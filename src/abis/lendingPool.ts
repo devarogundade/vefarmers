@@ -274,15 +274,15 @@ export const lendingPoolAbi = [
       },
       {
         indexed: false,
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
       {
         indexed: false,
-        internalType: "int64",
+        internalType: "uint256",
         name: "newPrincipal",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "Borrowed",
@@ -318,21 +318,21 @@ export const lendingPoolAbi = [
       },
       {
         indexed: false,
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
       {
         indexed: false,
-        internalType: "int64",
+        internalType: "uint256",
         name: "remainingPrincipal",
-        type: "int64",
+        type: "uint256",
       },
       {
         indexed: false,
-        internalType: "int64",
+        internalType: "uint256",
         name: "interestPaid",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "Repaid",
@@ -349,9 +349,9 @@ export const lendingPoolAbi = [
       },
       {
         indexed: false,
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
       {
         indexed: false,
@@ -399,9 +399,9 @@ export const lendingPoolAbi = [
       },
       {
         indexed: false,
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
       {
         indexed: false,
@@ -431,9 +431,9 @@ export const lendingPoolAbi = [
     name: "LIQUIDATION_BPS",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -444,9 +444,9 @@ export const lendingPoolAbi = [
     name: "MAX_BPS",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -529,9 +529,9 @@ export const lendingPoolAbi = [
   {
     inputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "borrow",
@@ -550,9 +550,9 @@ export const lendingPoolAbi = [
     name: "borrowRateBp",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -561,9 +561,9 @@ export const lendingPoolAbi = [
   {
     inputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
       {
         internalType: "address",
@@ -652,9 +652,9 @@ export const lendingPoolAbi = [
     name: "farmerPositions",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "principal",
-        type: "int64",
+        type: "uint256",
       },
       {
         internalType: "uint256",
@@ -670,7 +670,7 @@ export const lendingPoolAbi = [
     name: "fiat",
     outputs: [
       {
-        internalType: "contract FiatInterface",
+        internalType: "contract IERC20",
         name: "",
         type: "address",
       },
@@ -696,9 +696,9 @@ export const lendingPoolAbi = [
     name: "loanToValueBp",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -779,9 +779,9 @@ export const lendingPoolAbi = [
     name: "outstanding",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -823,9 +823,9 @@ export const lendingPoolAbi = [
   {
     inputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
       {
         internalType: "address",
@@ -836,9 +836,9 @@ export const lendingPoolAbi = [
     name: "repay",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "nonpayable",
@@ -847,9 +847,9 @@ export const lendingPoolAbi = [
   {
     inputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "bps",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "setBorrowRateBp",
@@ -860,9 +860,9 @@ export const lendingPoolAbi = [
   {
     inputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "bps",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "setLoanToValueBp",
@@ -886,9 +886,9 @@ export const lendingPoolAbi = [
   {
     inputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
       {
         internalType: "address",
@@ -919,9 +919,9 @@ export const lendingPoolAbi = [
     name: "totalBorrowed",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -932,9 +932,9 @@ export const lendingPoolAbi = [
     name: "totalSupplied",
     outputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "",
-        type: "int64",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -1022,9 +1022,9 @@ export const lendingPoolAbi = [
   {
     inputs: [
       {
-        internalType: "int64",
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
       },
     ],
     name: "withdraw",

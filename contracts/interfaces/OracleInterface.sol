@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.20;
 
 /// @title OracleInterface
 /// @notice Simple oracle interface for VET <-> fiat (smallest units) price quotations

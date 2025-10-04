@@ -60,7 +60,7 @@ export default function FarmerDashboard() {
       title: "Current Loan",
       value: loading
         ? "•••"
-        : `${Symbols[farmer?.preferredPool]}${Number(formatUnits(pool?.borrow ?? 0n, 2)).toLocaleString()}`,
+        : `${Symbols[farmer?.preferredPool]}${Number(formatUnits(pool?.borrow ?? 0n, pool.decimals)).toLocaleString()}`,
       change: `Since ${farmer?.createdAt}`,
       icon: DollarSign,
       color: "text-primary",
@@ -243,7 +243,9 @@ export default function FarmerDashboard() {
                 </span>
                 <span className="font-semibold">
                   {Symbols[farmer?.preferredPool]}
-                  {Number(formatUnits(pool?.borrow ?? 0n, 2)).toLocaleString()}
+                  {Number(
+                    formatUnits(pool?.borrow ?? 0n, pool.decimals)
+                  ).toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -274,7 +276,7 @@ export default function FarmerDashboard() {
                 <span className="font-semibold text-lg">
                   {Symbols[farmer?.preferredPool]}
                   {Number(
-                    formatUnits(pool?.outstanding ?? 0n, 2)
+                    formatUnits(pool?.outstanding ?? 0n, pool.decimals)
                   ).toLocaleString()}
                 </span>
               </div>

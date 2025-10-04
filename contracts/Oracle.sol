@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.20;
 
 import {OracleInterface} from "./interfaces/OracleInterface.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";

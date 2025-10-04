@@ -282,7 +282,7 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
                           EURC (Circle EUR)
                         </SelectItem>
                         <SelectItem value={Contracts.NGNCPool}>
-                          NGNC (Circle Naira)
+                          NGNC (Circle NGN)
                         </SelectItem>
                       </SelectContent>
                     </Select>

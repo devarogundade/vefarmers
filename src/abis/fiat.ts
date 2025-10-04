@@ -1,8 +1,110 @@
 export const fiatAbi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "string",
+        name: "_name",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_symbol",
+        type: "string",
+      },
+      {
+        internalType: "uint8",
+        name: "_fiatDecimals",
+        type: "uint8",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "allowance",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "needed",
+        type: "uint256",
+      },
+    ],
+    name: "ERC20InsufficientAllowance",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "balance",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "needed",
+        type: "uint256",
+      },
+    ],
+    name: "ERC20InsufficientBalance",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "approver",
+        type: "address",
+      },
+    ],
+    name: "ERC20InvalidApprover",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
+    ],
+    name: "ERC20InvalidReceiver",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+    ],
+    name: "ERC20InvalidSender",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
+    ],
+    name: "ERC20InvalidSpender",
+    type: "error",
   },
   {
     inputs: [
@@ -27,71 +129,28 @@ export const fiatAbi = [
     type: "error",
   },
   {
-    inputs: [],
-    name: "TokenAlreadyCreated",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-    ],
-    name: "TokenBurnFailed",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-    ],
-    name: "TokenCreationFailed",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-    ],
-    name: "TokenMintFailed",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-    ],
-    name: "TokenTransferFailed",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {
-        indexed: false,
-        internalType: "bool",
-        name: "",
-        type: "bool",
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "spender",
+        type: "address",
       },
       {
         indexed: false,
-        internalType: "bytes",
-        name: "",
-        type: "bytes",
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
       },
     ],
-    name: "CallResponseEvent",
+    name: "Approval",
     type: "event",
   },
   {
@@ -119,35 +178,9 @@ export const fiatAbi = [
       {
         indexed: true,
         internalType: "address",
-        name: "tokenAddress",
-        type: "address",
-      },
-    ],
-    name: "TokenCreated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
         name: "from",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "int64",
-        name: "amount",
-        type: "int64",
-      },
-    ],
-    name: "TokensBurned",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
       {
         indexed: true,
         internalType: "address",
@@ -156,63 +189,33 @@ export const fiatAbi = [
       },
       {
         indexed: false,
-        internalType: "int64",
-        name: "amount",
-        type: "int64",
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
       },
     ],
-    name: "TokensMinted",
+    name: "Transfer",
     type: "event",
   },
   {
     inputs: [
       {
         internalType: "address",
-        name: "from",
+        name: "owner",
         type: "address",
       },
       {
-        internalType: "int64",
-        name: "amount",
-        type: "int64",
+        internalType: "address",
+        name: "spender",
+        type: "address",
       },
     ],
-    name: "burn",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
-        internalType: "int64",
-        name: "autoRenewPeriod",
-        type: "int64",
-      },
-    ],
-    name: "createUnderlying",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "decimals",
+    name: "allowance",
     outputs: [
       {
-        internalType: "int32",
+        internalType: "uint256",
         name: "",
-        type: "int32",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -222,18 +225,118 @@ export const fiatAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "to",
+        name: "spender",
         type: "address",
       },
       {
-        internalType: "int64",
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "approve",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "balanceOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
         name: "amount",
-        type: "int64",
+        type: "uint256",
+      },
+    ],
+    name: "burn",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "decimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "fiatDecimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
       },
     ],
     name: "mint",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "name",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -250,35 +353,6 @@ export const fiatAbi = [
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "encodedFunctionSelector",
-        type: "bytes",
-      },
-    ],
-    name: "redirectForToken",
-    outputs: [
-      {
-        internalType: "int256",
-        name: "responseCode",
-        type: "int256",
-      },
-      {
-        internalType: "bytes",
-        name: "response",
-        type: "bytes",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
     inputs: [],
     name: "renounceOwnership",
     outputs: [],
@@ -286,17 +360,33 @@ export const fiatAbi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "symbol",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalSupply",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
       {
         internalType: "address",
         name: "to",
@@ -304,16 +394,16 @@ export const fiatAbi = [
       },
       {
         internalType: "uint256",
-        name: "amount",
+        name: "value",
         type: "uint256",
       },
     ],
-    name: "transferFrom",
+    name: "transfer",
     outputs: [
       {
-        internalType: "int64",
-        name: "responseCode",
-        type: "int64",
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "nonpayable",
@@ -323,11 +413,6 @@ export const fiatAbi = [
     inputs: [
       {
         internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "address",
         name: "from",
         type: "address",
       },
@@ -338,16 +423,16 @@ export const fiatAbi = [
       },
       {
         internalType: "uint256",
-        name: "serialNumber",
+        name: "value",
         type: "uint256",
       },
     ],
-    name: "transferFromNFT",
+    name: "transferFrom",
     outputs: [
       {
-        internalType: "int64",
-        name: "responseCode",
-        type: "int64",
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "nonpayable",
@@ -366,17 +451,4 @@ export const fiatAbi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-  {
-    inputs: [],
-    name: "underlying",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
+] as const;

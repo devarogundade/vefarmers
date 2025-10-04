@@ -1,7 +1,6 @@
-import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
-import dotenv from "dotenv";
-
-dotenv.config();
+require("@nomicfoundation/hardhat-toolbox");
+require("@vechain/sdk-hardhat-plugin");
+require("dotenv").config();
 
 // Check if we have a valid private key
 const hasPrivateKey =
@@ -12,9 +11,8 @@ const hasPrivateKey =
 const accounts = hasPrivateKey ? [process.env.VECHAIN_PRIVATE_KEY] : undefined;
 
 module.exports = {
-  plugins: [hardhatToolboxMochaEthersPlugin],
   solidity: {
-    version: "0.8.28",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,
@@ -25,28 +23,14 @@ module.exports = {
   },
   networks: {
     vechain_testnet: {
-      type: "http",
       url: "https://testnet.vechain.org",
       ...(accounts && { accounts }),
       gas: "auto",
       gasPrice: "auto",
       timeout: 20000,
     },
-    vechain_testnet_delegated: {
-      type: "http",
-      url: "https://testnet.vechain.org",
-      ...(accounts && { accounts }),
-      enableDelegation: true,
-      gasPayer: {
-        gasPayerServiceUrl: "https://sponsor-testnet.vechain.energy/by/940",
-      },
-    },
-    vechain_mainnet: {
-      type: "http",
-      url: "https://mainnet.vechain.org",
-      ...(accounts && { accounts }),
-      gas: "auto",
-      gasPrice: "auto",
+    hardhat: {
+      chainId: 1337,
     },
   },
   paths: {

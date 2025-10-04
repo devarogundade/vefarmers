@@ -3,14 +3,16 @@ import { ThorClient } from "@vechain/sdk-network";
 export const thorClient = ThorClient.at("https://testnet.vechain.org");
 
 export const Contracts = {
-  USDC: "0x2De3704dd711dD0dd2FE884c839CC4D4E7Dedc58",
-  EURC: "0xF36184FeC60231A1224dE879374bF5069a1fcB0B",
-  NGNC: "0xfb17e5e510a72885b8b7Ba30ce33B8CcDABa5dbE",
-  Orcale: "0x2833729128769a516377989F60a2585F829Df840",
-  FarmerRegistry: "0xC84BA071EE3372DfBc9023d2d292dc363937293C",
-  USDCPool: "0x8D6883aAB2DC30dC515017401C66db0Db3fD93EF",
-  EURCPool: "0xCF934d7D3cEda918ee5a581B96AeF09028065469",
-  NGNCPool: "0x12B1639724058F953fA1f5b108402C83aA58d0fD",
+  USDC: "0xaed8433cdc26a99fca6fb3bf028b28f9595cc232",
+  EURC: "0x368418b0656c5045caced6fd2a421621995a48e1",
+  NGNC: "0xbdf21eb4d6ac03a3dcb40a91e61c847b5b819d0c",
+  Orcale: "0x2116c3e3bcf58e5767a8188c31331f2f2a41b230",
+  RewardsProvider: "0x1cf73d9fb397e3ce4a9f5dc6a94d05e9ffea69fa",
+  FarmerRegistry: "0xe79471ece96ab0113643506d1a4d567f6d12ede8",
+  VeFarmersFactory: "0xb7dd6cfbb1c4d3bc68ebbc19d86215ab2b787f23",
+  USDCPool: "0x8e84aeCDF66BaF2d28B110B8091873Af9102b6Cb",
+  EURCPool: "0x1408F6e8d7E34A1039d6970ce1d0E580Db13D065",
+  NGNCPool: "0x46a310159B344D0ef2B3b3eF51CA2c1BC9eaC49B",
 };
 
 export const Symbols: Record<string, string> = {};

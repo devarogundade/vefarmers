@@ -254,7 +254,7 @@ export default function Landing() {
                             <span className="text-muted-foreground">TVL</span>
                             <span className="font-medium">
                               {Number(
-                                formatUnits(pool.totalLiquidity, 2)
+                                formatUnits(pool.totalLiquidity, pool.decimals)
                               ).toLocaleString()}{" "}
                               {Symbols[pool.address]}
                             </span>
@@ -264,10 +264,15 @@ export default function Landing() {
                               Your Position
                             </span>
                             <span className="font-medium">
-                              {Number(formatUnits(pool.lp, 2)).toLocaleString()}{" "}
+                              {Number(
+                                formatUnits(pool.lp, pool.decimals)
+                              ).toLocaleString()}{" "}
                               {Symbols[pool.address]} (
                               {Number(
-                                formatUnits(pool.withdrawable - pool.lp, 2)
+                                formatUnits(
+                                  pool.withdrawable - pool.lp,
+                                  pool.decimals
+                                )
                               ).toLocaleString()}{" "}
                               {Symbols[pool.address]})
                             </span>
@@ -279,11 +284,14 @@ export default function Landing() {
                             </span>
                             <span className="font-medium">
                               {Number(
-                                formatUnits(pool.borrow, 2)
+                                formatUnits(pool.borrow, pool.decimals)
                               ).toLocaleString()}{" "}
                               {Symbols[pool.address]} (
                               {Number(
-                                formatUnits(pool.outstanding - pool.borrow, 2)
+                                formatUnits(
+                                  pool.outstanding - pool.borrow,
+                                  pool.decimals
+                                )
                               ).toLocaleString()}{" "}
                               {Symbols[pool.address]})
                             </span>

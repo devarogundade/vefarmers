@@ -1,6 +1,12 @@
 export const farmerRegistryAbi = [
   {
-    inputs: [],
+    inputs: [
+      {
+        internalType: "contract RewardsProviderInterface",
+        name: "_provider",
+        type: "address",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
@@ -229,6 +235,19 @@ export const farmerRegistryAbi = [
         internalType: "string",
         name: "",
         type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "provider",
+    outputs: [
+      {
+        internalType: "contract RewardsProviderInterface",
+        name: "",
+        type: "address",
       },
     ],
     stateMutability: "view",

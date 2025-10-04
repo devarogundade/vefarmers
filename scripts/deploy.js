@@ -1,18 +1,14 @@
-import { network } from "hardhat";
-import dotenv from "dotenv";
+import hre from 'hardhat';
+import { config } from "dotenv";
 
-dotenv.config();
+config();
 
-const APP_ID = process.env.VEBETTERDAO_APP_ID!;
+const APP_ID = process.env.VEBETTERDAO_APP_ID;
 const RATE = 10_800_000;
-const X2EARN_REWARDS_POOL = "0x5F8f86B8D0Fa93cdaE20936d150175dF0205fB38";
+const X2EARN_REWARDS_POOL = process.env.X2EARN_REWARDS_POOL;
 
 async function main() {
-  const { ethers } = await network.connect({
-    network: "testnet",
-  });
-
-  const [deployer] = await ethers.getSigners();
+  const [deployer] = await hre.ethers.getSigners();
 
   console.log("Deploying contracts with:", deployer.address);
 
@@ -29,7 +25,7 @@ async function main() {
 
   console.log("EURC:", await eurc.getAddress());
 
-  const ngnc = await Fiat.deploy("Circle Naira", "NGNC", 2);
+  const ngnc = await Fiat.deploy("Circle NGN", "NGNC", 2);
   await ngnc.waitForDeployment();
 
   console.log("NGNC:", await ngnc.getAddress());
@@ -104,3 +100,15 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+
+
+// USDC: 0xaed8433cdc26a99fca6fb3bf028b28f9595cc232;
+// EURC: 0x368418b0656c5045caced6fd2a421621995a48e1;
+// NGNC: 0xbdf21eb4d6ac03a3dcb40a91e61c847b5b819d0c
+// Oracle deployed at: 0x2116c3e3bcf58e5767a8188c31331f2f2a41b230
+// Rewards provider: 0x1cf73d9fb397e3ce4a9f5dc6a94d05e9ffea69fa
+// FarmerRegistry deployed at: 0xe79471ece96ab0113643506d1a4d567f6d12ede8
+// VeFarmersFactory deployed at: 0xb7dd6cfbb1c4d3bc68ebbc19d86215ab2b787f23
+// USDC pool: 0x8e84aeCDF66BaF2d28B110B8091873Af9102b6Cb
+// EURC pool: 0x1408F6e8d7E34A1039d6970ce1d0E580Db13D065
+// NGNC pool: 0x46a310159B344D0ef2B3b3eF51CA2c1BC9eaC49B;
