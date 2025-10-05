@@ -11,6 +11,7 @@ import {
   where,
   getDoc,
   updateDoc,
+  or,
 } from "firebase/firestore";
 
 export class PledgesService {
@@ -20,8 +21,13 @@ export class PledgesService {
       const dbRef = collection(db, "pledges");
       let q = query(dbRef);
 
-      q = query(q, where("pledgerAddress", "==", filters?.pledgerAddress));
-      q = query(q, where("farmerAddress", "==", filters?.farmerAddress));
+      q = query(
+        q,
+        or(
+          where("pledgerAddress", "==", filters?.pledgerAddress ?? ""),
+          where("farmerAddress", "==", filters?.farmerAddress ?? "")
+        )
+      );
 
       const querySnapshot = await getDocs(q);
 
