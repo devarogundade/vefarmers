@@ -70,7 +70,6 @@ export class PledgesService {
       const id = `${farmerResponse.data.address}-${pledgerAddress}`;
 
       const db = getFirestore();
-
       const docSnap = await getDoc(doc(db, "pledges", id));
 
       if (docSnap.exists()) {

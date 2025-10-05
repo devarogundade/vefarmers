@@ -88,7 +88,7 @@ export default function PoolActionDialog({
     signerAccountAddress: account,
     onTxConfirmed: () => {
       timelineService.createTimelinePost(account, {
-        content: `You supplied ${Symbols[pool.address]}${amount} .`,
+        content: `You supplied ${Symbols[pool.address]}${amount}.`,
         type: "activity",
       });
 
@@ -271,7 +271,7 @@ export default function PoolActionDialog({
             const response: ApiResponse<string> = data;
 
             if (response.success) {
-              await timelineService.createTimelinePost(account, {
+              timelineService.createTimelinePost(account, {
                 content: `You supplied ${Symbols[pool.address]}${amount} from bank.`,
                 type: "activity",
               });
