@@ -414,7 +414,6 @@ export default function PoolActionDialog({
       }
     } catch (error) {
       toast(error?.message);
-    } finally {
       setIsOpen(false);
       setAmount("");
     }
@@ -438,7 +437,6 @@ export default function PoolActionDialog({
         ]);
       } catch (error) {
         toast(error?.message);
-      } finally {
         setIsOpen(false);
         setAmount("");
       }
@@ -456,7 +454,6 @@ export default function PoolActionDialog({
         ]);
       } catch (error) {
         toast(error?.message);
-      } finally {
         setIsOpen(false);
         setAmount("");
       }
@@ -473,7 +470,6 @@ export default function PoolActionDialog({
         ]);
       } catch (error) {
         toast(error?.message);
-      } finally {
         setIsOpen(false);
         setAmount("");
       }
@@ -491,7 +487,6 @@ export default function PoolActionDialog({
         ]);
       } catch (error) {
         toast(error?.message);
-      } finally {
         setIsOpen(false);
         setAmount("");
       }
