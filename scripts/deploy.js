@@ -102,13 +102,13 @@ main().catch((err) => {
 });
 
 
-// USDC: 0xaed8433cdc26a99fca6fb3bf028b28f9595cc232;
-// EURC: 0x368418b0656c5045caced6fd2a421621995a48e1;
-// NGNC: 0xbdf21eb4d6ac03a3dcb40a91e61c847b5b819d0c
-// Oracle deployed at: 0x2116c3e3bcf58e5767a8188c31331f2f2a41b230
-// Rewards provider: 0x1cf73d9fb397e3ce4a9f5dc6a94d05e9ffea69fa
-// FarmerRegistry deployed at: 0xe79471ece96ab0113643506d1a4d567f6d12ede8
-// VeFarmersFactory deployed at: 0xb7dd6cfbb1c4d3bc68ebbc19d86215ab2b787f23
-// USDC pool: 0x8e84aeCDF66BaF2d28B110B8091873Af9102b6Cb
-// EURC pool: 0x1408F6e8d7E34A1039d6970ce1d0E580Db13D065
-// NGNC pool: 0x46a310159B344D0ef2B3b3eF51CA2c1BC9eaC49B;
+// USDC: 0x3339f3530e1274ade87a009680fbac7fe66e0472;
+// EURC: 0xe891f3357da9096d24e84f2f437c0aa2edbff643;
+// NGNC: 0x1a7d8f0958c8816e8b211265a2e1a626e4e70ed2
+// Oracle deployed at: 0xe4d5260c6fd0c1e768da5e26fcd59f7baaee2d4d
+// Rewards provider: 0x79147230ddc158dc885359bc6ab0b0e06e09cbe7
+// FarmerRegistry deployed at: 0x06ac55144899ee7cac5a39323a28718a112a9ef0
+// VeFarmersFactory deployed at: 0xc01c4119f24415521eb4d7b775be10b24aa56603
+// USDC pool: 0x697E328B12C968E1CcDc7260962AD42eD543bC39
+// EURC pool: 0x74C6d7Ca386B1b25481341Fb867Fa349316C59df
+// NGNC pool: 0xC6367F172293e3cCAA2DDB0ccf91AEcf32B88dfc;

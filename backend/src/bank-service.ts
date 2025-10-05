@@ -1,5 +1,3 @@
-const stripeTransfer = async () => {};
-
 const paystackTransfer = async (
   accountName: string,
   accountNumber: string,
@@ -56,4 +54,4 @@ const paystackTransfer = async (
   }
 };
 
-export { stripeTransfer, paystackTransfer };
+export { paystackTransfer };
