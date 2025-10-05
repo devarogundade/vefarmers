@@ -1,7 +1,7 @@
 {
   "name": "smart-contracts",
   "version": "1.0.0",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "dev": "vite --port 3000 --force",
     "build": "tsc -b && vite build",
