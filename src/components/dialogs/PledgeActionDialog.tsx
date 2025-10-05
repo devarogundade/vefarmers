@@ -235,7 +235,9 @@ export default function PledgeActionDialog({
 
           {action === "withdraw" && active && (
             <div className="flex justify-between items-center p-3 bg-red-50 rounded-lg border border-red-200">
-              <span className="text-sm font-medium">Active Pledge</span>
+              <span className="text-sm font-medium">
+                Pledge is currently active.
+              </span>
               <Badge variant="outline" className="text-red-700">
                 Cannot Withdraw
               </Badge>
