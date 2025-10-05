@@ -94,6 +94,7 @@ export default function PoolActionDialog({
         });
 
         toast.success("Transaction confirmed.", { id: action });
+        setAmount("");
         onClose();
       }
     },
@@ -110,11 +111,12 @@ export default function PoolActionDialog({
     onTxConfirmed: () => {
       if (amount) {
         timelineService.createTimelinePost(account, {
-          content: `You withdraw ${Symbols[pool.address]}${amount}.`,
+          content: `You withdrawn ${Symbols[pool.address]}${amount}.`,
           type: "activity",
         });
 
         toast.success("Transaction confirmed.", { id: action });
+        setAmount("");
         onClose();
       }
     },
@@ -139,11 +141,12 @@ export default function PoolActionDialog({
         }
 
         timelineService.createTimelinePost(account, {
-          content: `You repaid ${Symbols[pool.address]}${amount}`,
+          content: `You repaid ${Symbols[pool.address]}${amount}.`,
           type: "activity",
         });
 
         toast.success("Transaction confirmed.", { id: action });
+        setAmount("");
         onClose();
       }
     },
@@ -173,6 +176,7 @@ export default function PoolActionDialog({
         });
 
         toast.success("Transaction confirmed.", { id: action });
+        setAmount("");
         onClose();
       }
     },
