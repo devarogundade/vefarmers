@@ -18,9 +18,11 @@ import { useTimeline } from "@/hooks/useTimeline";
 import { useFarmer } from "@/hooks/useFarmers";
 import { toast } from "sonner";
 import { useDAppKitWallet } from "@vechain/vechain-kit";
+import Storage from "@/services/storageService";
 
 export default function FarmerTimeline() {
   const [newPost, setNewPost] = useState("");
+  const [imageFile, setImageFile] = useState(null);
   const { account } = useDAppKitWallet();
   const { farmer, loading: loadingFarmer } = useFarmer(account);
   const { posts, loading, createPost } = useTimeline({
@@ -28,10 +30,27 @@ export default function FarmerTimeline() {
     type: "update",
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onImageSelect = (e: any) => {
+    const files: File[] = e.target.files;
+    if (files.length == 0) {
+      return setImageFile(null);
+    }
+    setImageFile(files[0]);
+  };
+
   const handlePost = async () => {
     try {
+      const images: string[] = [];
+      if (imageFile) {
+        images.push(
+          await Storage.uploadAsync(imageFile, `account-${Date.now()}`)
+        );
+      }
+
       await createPost(account, {
         content: newPost,
+        images,
         type: "update",
       });
 
@@ -88,10 +107,7 @@ export default function FarmerTimeline() {
           />
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="gap-2">
-                <Camera className="w-4 h-4" />
-                Add Photos
-              </Button>
+              <input type="file" accept="image/*" onChange={onImageSelect} />
             </div>
             <Button onClick={handlePost}>Share Update</Button>
           </div>
