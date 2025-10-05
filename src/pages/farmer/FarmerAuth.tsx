@@ -72,6 +72,8 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
         preferredPool: pool,
       });
 
+      setIsLoading(false);
+
       navigate("/farmer/dashboard");
     },
     onTxFailedOrCancelled: (error) => {
@@ -112,7 +114,6 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
         ]);
       } catch (error) {
         console.log(error);
-      } finally {
         setIsLoading(false);
       }
     } else {

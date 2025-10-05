@@ -31,11 +31,10 @@ export default function PledgePage() {
   const navigate = useNavigate();
   const [pledgeAmount, setPledgeAmount] = useState("");
   const [currency] = useState("VET");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { farmer, loading } = useFarmer(farmerAddress);
   const { account } = useDAppKitWallet();
   const { open: openTransactionModal } = useTransactionModal();
-  const { sendTransaction } = useSendTransaction({
+  const { sendTransaction, isTransactionPending } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
       pledgesService.createPledge(account, {
@@ -77,8 +76,6 @@ export default function PledgePage() {
     e.preventDefault();
 
     try {
-      setIsSubmitting(true);
-
       openTransactionModal();
 
       await sendTransaction([
@@ -91,8 +88,6 @@ export default function PledgePage() {
       ]);
     } catch (error) {
       toast.error(error?.message);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -265,9 +260,9 @@ export default function PledgePage() {
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isTransactionPending}
               >
-                {isSubmitting
+                {isTransactionPending
                   ? "Processing Pledge..."
                   : `Pledge ${pledgeAmount || "0"} ${currency}`}
               </Button>

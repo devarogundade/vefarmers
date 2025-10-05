@@ -38,12 +38,11 @@ export default function FarmerDashboard() {
   const { pool, loading, refetch } = usePool(farmer?.preferredPool, account);
   const { posts } = useTimeline({ address: account, type: "activity" });
 
-  const [activating, setActivating] = useState(false);
   const { open: openTransactionModal } = useTransactionModal();
   const { sendTransaction, isTransactionPending } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      toast.success("Successful");
+      toast.success("Transaction sent.");
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);
@@ -89,8 +88,6 @@ export default function FarmerDashboard() {
 
   const deactivate = async () => {
     try {
-      setActivating(true);
-
       openTransactionModal();
 
       await sendTransaction([
@@ -104,15 +101,11 @@ export default function FarmerDashboard() {
       refetch();
     } catch (error) {
       toast.error(error?.message);
-    } finally {
-      setActivating(false);
     }
   };
 
   const activate = async () => {
     try {
-      setActivating(true);
-
       openTransactionModal();
 
       await sendTransaction([
@@ -126,8 +119,6 @@ export default function FarmerDashboard() {
       refetch();
     } catch (error) {
       toast.error(error?.message);
-    } finally {
-      setActivating(false);
     }
   };
 
@@ -185,14 +176,14 @@ export default function FarmerDashboard() {
                       )}
 
                       <Button
-                        disabled={pool.borrow > 0n || activating}
+                        disabled={pool.borrow > 0n || isTransactionPending}
                         onClick={deactivate}
                       >
                         Deactivate
                       </Button>
                     </>
                   ) : (
-                    <Button disabled={activating} onClick={activate}>
+                    <Button disabled={isTransactionPending} onClick={activate}>
                       Activate
                     </Button>
                   )}
