@@ -6,50 +6,64 @@ import {
   MapPin,
   Calendar,
   Star,
-  Edit,
   Camera,
   TrendingUp,
   Users,
   Award,
   Loader,
   Heart,
+  BotIcon,
+  MessageCircle,
+  Share2,
 } from "lucide-react";
 import { usePledges } from "@/hooks/usePledges";
 import { useFarmer } from "@/hooks/useFarmers";
 import { Symbols } from "@/utils/constants";
 import { Link, useParams } from "react-router-dom";
+import { useMemo } from "react";
+import { useTimeline } from "@/hooks/useTimeline";
+import { formatDistanceToNow } from "date-fns";
 
 export default function FarmerPage() {
   const { farmerAddress } = useParams();
   const { farmer, loading: loadingFarmer } = useFarmer(farmerAddress);
   const { pledges } = usePledges({ farmerAddress });
+  const { posts } = useTimeline({
+    address: farmerAddress,
+    type: "update",
+  });
 
-  const achievements = [
-    {
-      title: "Verified Farmer",
-      icon: Star,
-      description: "Successfully verified account",
-    },
-    {
-      title: "Sustainable Farming",
-      icon: Award,
-      description: "Certified sustainable practices",
-    },
-    {
-      title: "Community Leader",
-      icon: Users,
-      description: "Mentored 10+ local farmers",
-    },
-    {
-      title: "Top Performer",
-      icon: TrendingUp,
-      description: loadingFarmer
-        ? "•••"
-        : `${Math.round(
-            (farmer?.totalRepaid / farmer?.totalBorrowed) * 100
-          )}% repayment rate`,
-    },
-  ];
+  const analyzeFarmer = async () => {};
+
+  const achievements = useMemo(
+    () => [
+      {
+        title: "Verified Farmer",
+        icon: Star,
+        description: "Successfully verified account",
+      },
+      {
+        title: "Sustainable Farming",
+        icon: Award,
+        description: "Certified sustainable practices",
+      },
+      {
+        title: "Community Leader",
+        icon: Users,
+        description: "Mentored 10+ local farmers",
+      },
+      {
+        title: "Top Performer",
+        icon: TrendingUp,
+        description: loadingFarmer
+          ? "•••"
+          : `${Math.round(
+              (farmer?.totalRepaid / farmer?.totalBorrowed) * 100
+            )}% repayment rate`,
+      },
+    ],
+    [farmer, loadingFarmer]
+  );
 
   if (loadingFarmer)
     return (
@@ -62,12 +76,19 @@ export default function FarmerPage() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Farmer Profile</h1>
-        <Link to={`/pledger/pledge/${farmerAddress}`}>
-          <Button className="gap-2">
-            <Heart className="w-4 h-4" />
-            Pledge
+        <div className="flex items-center gap-2">
+          <Button className="gap-2" variant="outline" onClick={analyzeFarmer}>
+            <BotIcon className="w-4 h-4" />
+            AI: Analyze Farmer
           </Button>
-        </Link>
+
+          <Link to={`/pledger/pledge/${farmerAddress}`}>
+            <Button className="gap-2">
+              <Heart className="w-4 h-4" />
+              Pledge
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -225,6 +246,85 @@ export default function FarmerPage() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Timeline Posts */}
+      <div className="space-y-6 mt-6">
+        {posts.map((post) => (
+          <Card key={post.id} className="card-hover">
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="w-3 h-3" />
+                  <span>{post.farmer.location}</span>
+                  <span>•</span>
+                  <Calendar className="w-3 h-3" />
+                  <span>
+                    {formatDistanceToNow(new Date(post.createdAt), {
+                      addSuffix: true,
+                    })}
+                  </span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-sm leading-relaxed">{post.content}</p>
+
+              {post.images && post.images.length > 0 && (
+                <div
+                  className={`grid gap-2 ${
+                    post.images.length === 1
+                      ? "grid-cols-1"
+                      : post.images.length === 2
+                        ? "grid-cols-2"
+                        : "grid-cols-3"
+                  }`}
+                >
+                  {post.images.map((image, index) => (
+                    <div
+                      key={index}
+                      className="aspect-video bg-muted rounded-lg overflow-hidden"
+                    >
+                      <img
+                        src={image}
+                        alt={`Post image ${index + 1}`}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-center gap-6 pt-4 border-t border-border">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-muted-foreground hover:text-primary"
+                  onClick={() => (post.likes = post.likes + 1)}
+                >
+                  <Heart className="w-4 h-4" />
+                  {post.likes} Likes
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-muted-foreground hover:text-primary"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  {post.comments} Comments
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-muted-foreground hover:text-primary"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );

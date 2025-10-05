@@ -9,7 +9,6 @@ import {
   MessageCircle,
   Share2,
   Camera,
-  Plus,
   MapPin,
   Calendar,
   Loader,
