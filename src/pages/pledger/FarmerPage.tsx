@@ -20,9 +20,11 @@ import { usePledges } from "@/hooks/usePledges";
 import { useFarmer } from "@/hooks/useFarmers";
 import { Symbols } from "@/utils/constants";
 import { Link, useParams } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTimeline } from "@/hooks/useTimeline";
 import { formatDistanceToNow } from "date-fns";
+import { generateFarmerSummary } from "@/services/aiService";
+import { toast } from "sonner";
 
 export default function FarmerPage() {
   const { farmerAddress } = useParams();
@@ -32,8 +34,25 @@ export default function FarmerPage() {
     address: farmerAddress,
     type: "update",
   });
+  const [analysis, setAnalysis] = useState("");
 
-  const analyzeFarmer = async () => {};
+  const analyzeFarmer = async () => {
+    const result = await generateFarmerSummary(
+      JSON.stringify({
+        farmerAddress,
+        farmer,
+        posts,
+        pledges,
+        poolsCurrencySymbols: Symbols,
+      })
+    );
+
+    if (result) {
+      setAnalysis(result);
+    } else {
+      toast.error("Gemini: Failed to generate summary.");
+    }
+  };
 
   const achievements = useMemo(
     () => [
@@ -91,7 +110,26 @@ export default function FarmerPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      {analysis.length > 0 && (
+        <Card className="card-hover">
+          <CardHeader>
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <BotIcon className="w-3 h-3" />
+                <span>AI Response</span>
+                <span>•</span>
+                <Calendar className="w-3 h-3" />
+                <span>Google Gemini</span>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm leading-relaxed">{analysis}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      <div className="grid lg:grid-cols-3 gap-6 mt-6">
         {/* Profile Card */}
         <Card className="lg:col-span-1">
           <CardContent className="p-6 text-center">
