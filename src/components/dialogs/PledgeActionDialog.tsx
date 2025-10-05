@@ -41,7 +41,6 @@ export default function PledgeActionDialog({
   onClose,
 }: PledgeActionDialogProps) {
   const [amount, setAmount] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [active, setActive] = useState(true);
   const { account } = useDAppKitWallet();
@@ -135,8 +134,6 @@ export default function PledgeActionDialog({
 
     if (action === "increase") {
       try {
-        setIsProcessing(true);
-
         openTransactionModal();
 
         sendPledgeTransaction([
@@ -149,13 +146,9 @@ export default function PledgeActionDialog({
         ]);
       } catch (error) {
         toast.error(error?.message);
-      } finally {
-        setIsProcessing(false);
       }
     } else if (action === "withdraw") {
       try {
-        setIsProcessing(true);
-
         openTransactionModal();
 
         sendWithdrawTransaction([
@@ -167,8 +160,6 @@ export default function PledgeActionDialog({
         ]);
       } catch (error) {
         toast.error(error?.message);
-      } finally {
-        setIsProcessing(false);
       }
     }
   };
@@ -328,10 +319,13 @@ export default function PledgeActionDialog({
             type="submit"
             className="w-full"
             disabled={
-              isProcessing || !amount || (action === "withdraw" && active)
+              isPledgeTransactionPending ||
+              isWithdrawTransactionPending ||
+              !amount ||
+              (action === "withdraw" && active)
             }
           >
-            {isProcessing
+            {isPledgeTransactionPending || isWithdrawTransactionPending
               ? "Processing..."
               : `${config.buttonText} ${amount || "0"} VET`}
           </Button>
