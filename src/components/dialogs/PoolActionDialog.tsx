@@ -171,7 +171,7 @@ export default function PoolActionDialog({
         }
 
         timelineService.createTimelinePost(account, {
-          content: `You borrowed ${Symbols[pool.address]}${amount} .`,
+          content: `You borrowed ${Symbols[pool.address]}${amount}.`,
           type: "activity",
         });
 
