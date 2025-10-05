@@ -19,6 +19,7 @@ import PledgerDashboard from "./pages/pledger/PledgerDashboard";
 import FarmersDirectory from "./pages/pledger/FarmersDirectory";
 import PledgePage from "./pages/pledger/PledgePage";
 import NotFound from "./pages/NotFound";
+import FarmerPage from "./pages/pledger/FarmerPage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FB_API_KEY,
@@ -91,6 +92,7 @@ const App = () => (
               <Route path="dashboard" element={<PledgerDashboard />} />
               <Route path="farmers" element={<FarmersDirectory />} />
               <Route path="pledge/:farmerAddress" element={<PledgePage />} />
+              <Route path="farmers/:farmerAddress" element={<FarmerPage />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />

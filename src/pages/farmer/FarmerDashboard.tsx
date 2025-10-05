@@ -13,11 +13,10 @@ import {
 import { useFarmer } from "@/hooks/useFarmers";
 import { usePool } from "@/hooks/usePools";
 import { formatEther, formatUnits, parseEther } from "viem";
-import { MAX_BPS_POW, thorClient, Symbols } from "@/utils/constants";
+import { MAX_BPS_POW, Symbols } from "@/utils/constants";
 import { useTimeline } from "@/hooks/useTimeline";
 import { toast } from "sonner";
 import { lendingPoolAbi } from "@/abis/lendingPool";
-import { useState } from "react";
 import PoolActionDialog from "@/components/dialogs/PoolActionDialog";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -26,10 +25,10 @@ import {
   useTransactionModal,
 } from "@vechain/vechain-kit";
 import { ABIContract, Address, Clause } from "@vechain/sdk-core";
+import { Link } from "react-router-dom";
 
 export default function FarmerDashboard() {
   const { account } = useDAppKitWallet();
-
   const {
     farmer,
     loading: loadingFarmer,
@@ -139,14 +138,27 @@ export default function FarmerDashboard() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
-            <MessageSquare className="w-4 h-4" />
-            New Update
-          </Button>
-          <Button className="gap-2">
-            <Plus className="w-4 h-4" />
-            Request Loan
-          </Button>
+          <Link to={"/farmer/timeline"}>
+            <Button variant="outline" className="gap-2">
+              <MessageSquare className="w-4 h-4" />
+              New Update
+            </Button>
+          </Link>
+          {pool && (
+            <PoolActionDialog
+              pool={pool}
+              action="borrow"
+              onClose={() => {
+                refetch();
+                refetchFarmer();
+              }}
+            >
+              <Button className="gap-2">
+                <Plus className="w-4 h-4" />
+                Request Loan
+              </Button>
+            </PoolActionDialog>
+          )}
         </div>
       </div>
 
