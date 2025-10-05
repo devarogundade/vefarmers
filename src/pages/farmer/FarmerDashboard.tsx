@@ -9,6 +9,7 @@ import {
   Plus,
   MessageSquare,
   Loader,
+  BotIcon,
 } from "lucide-react";
 import { useFarmer } from "@/hooks/useFarmers";
 import { usePool } from "@/hooks/usePools";
@@ -26,6 +27,10 @@ import {
 } from "@vechain/vechain-kit";
 import { ABIContract, Address, Clause } from "@vechain/sdk-core";
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { generateFarmingReply } from "@/services/aiService";
+import ReactMarkdown from "react-markdown";
 
 export default function FarmerDashboard() {
   const { account } = useDAppKitWallet();
@@ -36,7 +41,6 @@ export default function FarmerDashboard() {
   } = useFarmer(account);
   const { pool, loading, refetch } = usePool(farmer?.preferredPool, account);
   const { posts } = useTimeline({ address: account, type: "activity" });
-
   const { open: openTransactionModal } = useTransactionModal();
   const { sendTransaction, isTransactionPending } = useSendTransaction({
     signerAccountAddress: account,
@@ -47,6 +51,18 @@ export default function FarmerDashboard() {
       toast.error(typeof error == "string" ? error : error?.message);
     },
   });
+  const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState<string | null>(null);
+  const [isReplying, setIsReplying] = useState(false);
+
+  const handleAsk = async () => {
+    if (!prompt.trim()) return;
+    setIsReplying(true);
+    setResponse(null);
+    const reply = await generateFarmingReply(prompt);
+    setResponse(reply);
+    setIsReplying(false);
+  };
 
   const stats = [
     {
@@ -207,7 +223,7 @@ export default function FarmerDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-6 mb-8">
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
@@ -293,6 +309,41 @@ export default function FarmerDashboard() {
                 )}
               </div>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* AI Chat */}
+      <div className="grid lg:grid-cols-1 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              <div className="flex items-center gap-2">
+                <BotIcon />
+                <p>FarmGPT</p>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Ask about farming..."
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAsk()}
+              />
+              <Button onClick={handleAsk} disabled={isReplying}>
+                {isReplying ? "Thinking..." : "Ask"}
+              </Button>
+            </div>
+
+            {response && (
+              <div className="p-3 rounded-lg bg-muted border">
+                <div className="p-4 rounded-lg bg-muted border prose prose-sm max-w-none">
+                  <ReactMarkdown>{response}</ReactMarkdown>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

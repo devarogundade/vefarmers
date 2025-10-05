@@ -32,7 +32,7 @@ export const generateFarmingReply = async (
           parts: [
             {
               text: `
-                Plain text only as reply.
+                Markdown only as reply.
               `,
             },
           ],
@@ -73,7 +73,7 @@ export const generateFarmerSummary = async (
           parts: [
             {
               text: `
-                Plain text only as reply.
+                Markdown only as reply.
               `,
             },
           ],

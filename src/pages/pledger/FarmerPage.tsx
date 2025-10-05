@@ -25,6 +25,7 @@ import { useTimeline } from "@/hooks/useTimeline";
 import { formatDistanceToNow } from "date-fns";
 import { generateFarmerSummary } from "@/services/aiService";
 import { toast } from "sonner";
+import ReactMarkdown from "react-markdown";
 
 export default function FarmerPage() {
   const { farmerAddress } = useParams();
@@ -35,8 +36,10 @@ export default function FarmerPage() {
     type: "update",
   });
   const [analysis, setAnalysis] = useState("");
+  const [isReplying, setIsReplying] = useState(false);
 
   const analyzeFarmer = async () => {
+    setIsReplying(true);
     const result = await generateFarmerSummary(
       JSON.stringify({
         farmerAddress,
@@ -52,6 +55,8 @@ export default function FarmerPage() {
     } else {
       toast.error("Gemini: Failed to generate summary.");
     }
+
+    setIsReplying(false);
   };
 
   const achievements = useMemo(
@@ -124,7 +129,11 @@ export default function FarmerPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm leading-relaxed">{analysis}</p>
+            <p className="text-sm leading-relaxed">
+              <ReactMarkdown>
+                {isReplying ? "Thinking..." : analysis}
+              </ReactMarkdown>
+            </p>
           </CardContent>
         </Card>
       )}
