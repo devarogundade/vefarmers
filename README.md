@@ -236,8 +236,8 @@ Deactivates community pledge participation for the pool.
 * **Backend:** Node.js + Express
 * **Smart Contracts:** Solidity + Hardhat (VeChain compatible)
 * **Payments:** Paystack integration for fiat on/off ramp
-* **Database:** Firebase
-* **AI Layer:** FarmTrust Score engine (AI credit assessment and yield insights)
+* **Database:** Firestore
+* **AI Layer:** Gemini
 
 ---
 
