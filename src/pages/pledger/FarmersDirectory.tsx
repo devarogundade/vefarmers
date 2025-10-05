@@ -84,7 +84,10 @@ export default function FarmersDirectory() {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">{farmer.name}</h3>
                       {farmer.verified && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge
+                          variant="secondary"
+                          className="text-xs bg-green-100"
+                        >
                           <Star className="w-3 h-3 mr-1" />
                           Verified
                         </Badge>
@@ -100,7 +103,7 @@ export default function FarmersDirectory() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm text-muted-foreground mb-2">
+                <p className="text-sm text-muted-foreground mb-2 line-clamp-4 h-20">
                   {farmer.description}
                 </p>
                 <div className="flex flex-wrap gap-2">
