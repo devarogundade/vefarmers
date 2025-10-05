@@ -232,7 +232,7 @@ Deactivates community pledge participation for the pool.
 
 ## 🧩 Tech Stack
 
-* **Frontend:** React + Vite + TailwindCSS
+* **Frontend:** React + Vite + TailwindCSS + VeChainKit
 * **Backend:** Node.js + Express
 * **Smart Contracts:** Solidity + Hardhat (VeChain compatible)
 * **Payments:** Paystack integration for fiat on/off ramp
