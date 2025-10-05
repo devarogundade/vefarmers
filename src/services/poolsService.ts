@@ -5,7 +5,6 @@ import { pledgeManagerAbi } from "@/abis/pledgeManager";
 import { Pool } from "@/types";
 import { ApiResponse } from "@/types/api";
 import { Contracts, thorClient } from "@/utils/constants";
-import { zeroAddress } from "viem";
 
 export class PoolsService {
   private async loadPool(address: string, account?: string): Promise<Pool> {
@@ -50,29 +49,27 @@ export class PoolsService {
 
       const supplyAPY = BigInt((Number(borrowAPY) * utilizationRate) / 100);
 
-      const [lp, [principal], outstanding, ltvBps, pledgeManager] =
-        account == zeroAddress
-          ? [0n, [0n, 0n], 0n, 0n, undefined]
-          : await Promise.all([
-              (await lendingPool.read.balanceOf(account))[0] as bigint,
-              [(await lendingPool.read.farmerPositions(account))[0] as bigint],
-              (await lendingPool.read.outstanding(account))[0] as bigint,
-              (await lendingPool.read.ltvBps(account))[0] as bigint,
-              (await farmerRegistry.read.farmerToManager(account))[0] as string,
-            ]);
+      const [lp, [principal], outstanding, ltvBps, pledgeManager] = !account
+        ? [0n, [0n, 0n], 0n, 0n, undefined]
+        : await Promise.all([
+            (await lendingPool.read.balanceOf(account))[0] as bigint,
+            [(await lendingPool.read.farmerPositions(account))[0] as bigint],
+            (await lendingPool.read.outstanding(account))[0] as bigint,
+            (await lendingPool.read.ltvBps(account))[0] as bigint,
+            (await farmerRegistry.read.farmerToManager(account))[0] as string,
+          ]);
 
       const pledgeManagerContract = thorClient.contracts.load(
         pledgeManager,
         pledgeManagerAbi
       );
 
-      const [totalPledge, active] =
-        pledgeManager == zeroAddress
-          ? [0n, false]
-          : await Promise.all([
-              (await pledgeManagerContract.read.totalSupply())[0] as bigint,
-              (await pledgeManagerContract.read.active())[0] as boolean,
-            ]);
+      const [totalPledge, active] = !pledgeManager
+        ? [0n, false]
+        : await Promise.all([
+            (await pledgeManagerContract.read.totalSupply())[0] as bigint,
+            (await pledgeManagerContract.read.active())[0] as boolean,
+          ]);
 
       const withdrawable =
         lp === 0n

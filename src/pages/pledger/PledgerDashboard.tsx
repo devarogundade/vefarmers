@@ -52,6 +52,8 @@ export default function PledgerDashboard() {
   });
 
   const getHarvestable = useCallback(async () => {
+    if (!account) return;
+
     for (const pledge of pledges) {
       const contract = thorClient.contracts.load(
         pledge.farmer.pledgeManager,

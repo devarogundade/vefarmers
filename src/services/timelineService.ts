@@ -25,17 +25,8 @@ export class TimelineService {
       const dbRef = collection(db, "timelines");
       let q = query(dbRef);
 
-      if (filters?.address) {
-        q = query(q, where("address", "==", filters?.address));
-      }
-
-      if (filters?.type) {
-        q = query(q, where("type", "==", filters?.type));
-      }
-
-      if (filters?.limit || filters?.offset) {
-        q = query(q, where("type", "==", filters?.type));
-      }
+      q = query(q, where("address", "==", filters?.address));
+      q = query(q, where("type", "==", filters?.type));
 
       const querySnapshot = await getDocs(q);
 

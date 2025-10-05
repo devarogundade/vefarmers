@@ -20,13 +20,8 @@ export class PledgesService {
       const dbRef = collection(db, "pledges");
       let q = query(dbRef);
 
-      if (filters?.pledgerAddress) {
-        q = query(q, where("pledgerAddress", "==", filters?.pledgerAddress));
-      }
-
-      if (filters?.farmerAddress) {
-        q = query(q, where("farmerAddress", "==", filters?.farmerAddress));
-      }
+      q = query(q, where("pledgerAddress", "==", filters?.pledgerAddress));
+      q = query(q, where("farmerAddress", "==", filters?.farmerAddress));
 
       const querySnapshot = await getDocs(q);
 

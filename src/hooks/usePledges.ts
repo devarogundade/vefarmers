@@ -28,8 +28,6 @@ export function usePledges(filters?: PledgeFilters): UsePledgesReturn {
     try {
       const response = await pledgesService.getPledges(filters);
 
-      console.log("dx:'aa");
-
       if (response.success) {
         setState((prev) => ({
           ...prev,
