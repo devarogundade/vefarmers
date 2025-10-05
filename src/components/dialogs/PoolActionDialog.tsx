@@ -522,9 +522,7 @@ export default function PoolActionDialog({
         lendingPoolAbi
       );
 
-      const result = (
-        await lendingPool.read.withdrawable(account)
-      )[0] as bigint;
+      const result = (await lendingPool.read.borrowable(account))[0] as bigint;
 
       setBorrowable(
         Number(formatUnits(result, pool.decimals)) -

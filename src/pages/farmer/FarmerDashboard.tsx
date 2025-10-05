@@ -28,7 +28,7 @@ import {
 import { ABIContract, Address, Clause } from "@vechain/sdk-core";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateFarmingReply } from "@/services/aiService";
 import ReactMarkdown from "react-markdown";
 
@@ -54,6 +54,10 @@ export default function FarmerDashboard() {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState<string | null>(null);
   const [isReplying, setIsReplying] = useState(false);
+
+  useEffect(() => {
+    refetch();
+  }, [farmer]);
 
   const handleAsk = async () => {
     if (!prompt.trim()) return;
@@ -234,7 +238,10 @@ export default function FarmerDashboard() {
           <CardContent className="space-y-4">
             {posts.map((post) => {
               return (
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                <div
+                  key={post.id}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
+                >
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
                   <div className="flex-1">
                     <p className="text-sm">{post.content}</p>

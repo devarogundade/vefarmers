@@ -285,7 +285,10 @@ export default function PledgerDashboard() {
           <CardContent className="space-y-4">
             {posts.map((post) => {
               return (
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                <div
+                  key={post.id}
+                  className="flex items-start gap-3 p-3 rounded-lg bg-muted/50"
+                >
                   <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
                   <div className="flex-1">
                     <p className="text-sm">{post.content}</p>

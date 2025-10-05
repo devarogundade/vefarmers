@@ -75,7 +75,7 @@ interface UsePoolReturn extends UsePoolState {
   refetch: () => Promise<void>;
 }
 
-export function usePool(address: string, account?: string): UsePoolReturn {
+export function usePool(address?: string, account?: string): UsePoolReturn {
   const [state, setState] = useState<UsePoolState>({
     pool: null,
     loading: true,
@@ -113,7 +113,7 @@ export function usePool(address: string, account?: string): UsePoolReturn {
 
   useEffect(() => {
     fetchPool();
-  }, []);
+  }, [address]);
 
   return {
     ...state,
