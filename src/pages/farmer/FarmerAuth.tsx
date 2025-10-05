@@ -30,6 +30,7 @@ import {
   useDAppKitWallet,
   useSendTransaction,
   useTransactionModal,
+  WalletButton,
 } from "@vechain/vechain-kit";
 import { ABIContract, Address, Clause } from "@vechain/sdk-core";
 
@@ -149,206 +150,219 @@ export default function FarmerAuth({ mode }: FarmerAuthProps) {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-              <Sprout className="w-7 h-7 text-white" />
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 bg-white z-10 border-b border-border">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
+              <Sprout className="w-6 h-6 text-white" />
             </div>
-            <span className="text-3xl font-bold">VeFarmers</span>
+            <span className="text-2xl font-bold">VeFarmers</span>
           </div>
-          <h1 className="text-2xl font-bold mb-2">
-            {mode === "login"
-              ? "Welcome Back, Farmer!"
-              : "Join VeFarmers as a Farmer"}
-          </h1>
-          <p className="text-muted-foreground">
-            {mode === "login"
-              ? "Sign in to manage your farm and connect with pledgers"
-              : "Start your journey with community-backed micro-lending"}
-          </p>
+          <div className="flex items-center gap-3">
+            <WalletButton
+              mobileVariant="iconAndDomain"
+              desktopVariant="iconAndDomain"
+            />
+          </div>
         </div>
+      </header>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {mode === "login" ? "Sign In" : "Create Account"}
-            </CardTitle>
-            <CardDescription>
+      <div className="flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold mb-2">
               {mode === "login"
-                ? "Enter your credentials to access your farmer dashboard"
-                : "Fill in your details to get started"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {mode === "register" && (
-                <>
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="name"
-                        placeholder="Sarah Okafor"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
+                ? "Welcome Back, Farmer!"
+                : "Join VeFarmers as a Farmer"}
+            </h1>
+            <p className="text-muted-foreground">
+              {mode === "login"
+                ? "Sign in to manage your farm and connect with pledgers"
+                : "Start your journey with community-backed micro-lending"}
+            </p>
+          </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="location">Farm Location</Label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="location"
-                        placeholder="Kaduna State, Nigeria"
-                        className="pl-10"
-                        value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {mode === "login" ? "Sign In" : "Create Account"}
+              </CardTitle>
+              <CardDescription>
+                {mode === "login"
+                  ? "Enter your credentials to access your farmer dashboard"
+                  : "Fill in your details to get started"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {mode === "register" && (
+                  <>
                     <div className="space-y-2">
-                      <Label htmlFor="farmSize">Farm Size</Label>
-                      <Select onValueChange={(value) => setFarmSize(value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select size" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1-2 hectares">
-                            1-2 hectares
-                          </SelectItem>
-                          <SelectItem value="3-5 hectares">
-                            3-5 hectares
-                          </SelectItem>
-                          <SelectItem value="6-10 hectares">
-                            6-10 hectares
-                          </SelectItem>
-                          <SelectItem value="10+ hectares">
-                            10+ hectares
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="name">Full Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          id="name"
+                          placeholder="Sarah Okafor"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="pl-10"
+                          required
+                        />
+                      </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="cropType">Primary Crop</Label>
-                      <Select onValueChange={(value) => setCropType(value)}>
+                      <Label htmlFor="location">Farm Location</Label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          id="location"
+                          placeholder="Kaduna State, Nigeria"
+                          className="pl-10"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="farmSize">Farm Size</Label>
+                        <Select onValueChange={(value) => setFarmSize(value)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select size" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1-2 hectares">
+                              1-2 hectares
+                            </SelectItem>
+                            <SelectItem value="3-5 hectares">
+                              3-5 hectares
+                            </SelectItem>
+                            <SelectItem value="6-10 hectares">
+                              6-10 hectares
+                            </SelectItem>
+                            <SelectItem value="10+ hectares">
+                              10+ hectares
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="cropType">Primary Crop</Label>
+                        <Select onValueChange={(value) => setCropType(value)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select crop" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Maize">Maize</SelectItem>
+                            <SelectItem value="Rice">Rice</SelectItem>
+                            <SelectItem value="Cassava">Cassava</SelectItem>
+                            <SelectItem value="Yam">Yam</SelectItem>
+                            <SelectItem value="Beans">Beans</SelectItem>
+                            <SelectItem value="Soybean">Soybean</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="preferredPool">
+                        Preferred Lending Pool
+                      </Label>
+                      <Select onValueChange={(value: string) => setPool(value)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select crop" />
+                          <SelectValue placeholder="Select currency pool" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Maize">Maize</SelectItem>
-                          <SelectItem value="Rice">Rice</SelectItem>
-                          <SelectItem value="Cassava">Cassava</SelectItem>
-                          <SelectItem value="Yam">Yam</SelectItem>
-                          <SelectItem value="Beans">Beans</SelectItem>
-                          <SelectItem value="Soybean">Soybean</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
+                          <SelectItem value={Contracts.USDCPool}>
+                            USDC (Circle USD)
+                          </SelectItem>
+                          <SelectItem value={Contracts.EURCPool}>
+                            EURC (Circle EUR)
+                          </SelectItem>
+                          <SelectItem value={Contracts.NGNCPool}>
+                            NGNC (Circle NGN)
+                          </SelectItem>
                         </SelectContent>
                       </Select>
+                      <p className="text-xs text-muted-foreground">
+                        Choose the currency pool you'd like to borrow from
+                      </p>
                     </div>
-                  </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="preferredPool">
-                      Preferred Lending Pool
-                    </Label>
-                    <Select onValueChange={(value: string) => setPool(value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select currency pool" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value={Contracts.USDCPool}>
-                          USDC (Circle USD)
-                        </SelectItem>
-                        <SelectItem value={Contracts.EURCPool}>
-                          EURC (Circle EUR)
-                        </SelectItem>
-                        <SelectItem value={Contracts.NGNCPool}>
-                          NGNC (Circle NGN)
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="text-xs text-muted-foreground">
-                      Choose the currency pool you'd like to borrow from
-                    </p>
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="description">About Your Farm</Label>
+                      <Textarea
+                        id="description"
+                        placeholder="Tell us about your farming experience and goals..."
+                        className="min-h-[80px]"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </>
+                )}
 
-                  <div className="space-y-2">
-                    <Label htmlFor="description">About Your Farm</Label>
-                    <Textarea
-                      id="description"
-                      placeholder="Tell us about your farming experience and goals..."
-                      className="min-h-[80px]"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="farmer@example.com"
+                      className="pl-10"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
-                </>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="farmer@example.com"
-                    className="pl-10"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
                 </div>
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading
+                    ? "Processing..."
+                    : mode === "login"
+                      ? "Sign In"
+                      : "Create Account"}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-sm text-muted-foreground">
+                  {mode === "login"
+                    ? "Don't have an account? "
+                    : "Already have an account? "}
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto font-semibold"
+                    onClick={() =>
+                      navigate(
+                        mode === "login" ? "/farmer/register" : "/farmer/login"
+                      )
+                    }
+                  >
+                    {mode === "login" ? "Register here" : "Sign in"}
+                  </Button>
+                </p>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading
-                  ? "Processing..."
-                  : mode === "login"
-                    ? "Sign In"
-                    : "Create Account"}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                {mode === "login"
-                  ? "Don't have an account? "
-                  : "Already have an account? "}
-                <Button
-                  variant="link"
-                  className="p-0 h-auto font-semibold"
-                  onClick={() =>
-                    navigate(
-                      mode === "login" ? "/farmer/register" : "/farmer/login"
-                    )
-                  }
-                >
-                  {mode === "login" ? "Register here" : "Sign in"}
+              <div className="mt-4 text-center">
+                <Button variant="ghost" onClick={() => navigate("/")}>
+                  ← Back to Home
                 </Button>
-              </p>
-            </div>
-
-            <div className="mt-4 text-center">
-              <Button variant="ghost" onClick={() => navigate("/")}>
-                ← Back to Home
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
