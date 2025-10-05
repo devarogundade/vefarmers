@@ -92,7 +92,7 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
-      toast.loading("Transaction confirmed..", { id: action });
+      toast.success("Transaction confirmed.", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
@@ -111,7 +111,7 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
-      toast.loading("Transaction confirmed..", { id: action });
+      toast.success("Transaction confirmed.", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
@@ -138,7 +138,7 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
-      toast.loading("Transaction confirmed..", { id: action });
+      toast.success("Transaction confirmed.", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
@@ -165,7 +165,7 @@ export default function PoolActionDialog({
         type: "activity",
       });
 
-      toast.loading("Transaction confirmed..", { id: action });
+      toast.success("Transaction confirmed.", { id: action });
       onClose();
     },
     onTxFailedOrCancelled: (error) => {
