@@ -154,6 +154,9 @@ export default function FarmerDashboard() {
           </p>
         </div>
         <div className="flex gap-3">
+          <Button variant="outline" className="gap-2">
+            Complete KYC
+          </Button>
           <Link to={"/farmer/timeline"}>
             <Button variant="outline" className="gap-2">
               <MessageSquare className="w-4 h-4" />

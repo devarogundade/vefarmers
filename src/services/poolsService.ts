@@ -5,6 +5,7 @@ import { pledgeManagerAbi } from "@/abis/pledgeManager";
 import { Pool } from "@/types";
 import { ApiResponse } from "@/types/api";
 import { Contracts, thorClient } from "@/utils/constants";
+import { zeroAddress } from "viem";
 
 export class PoolsService {
   private async loadPool(address: string, account?: string): Promise<Pool> {
@@ -64,12 +65,13 @@ export class PoolsService {
         pledgeManagerAbi
       );
 
-      const [totalPledge, active] = !pledgeManager
-        ? [0n, false]
-        : await Promise.all([
-            (await pledgeManagerContract.read.totalSupply())[0] as bigint,
-            (await pledgeManagerContract.read.active())[0] as boolean,
-          ]);
+      const [totalPledge, active] =
+        pledgeManager == zeroAddress
+          ? [0n, false]
+          : await Promise.all([
+              (await pledgeManagerContract.read.totalSupply())[0] as bigint,
+              (await pledgeManagerContract.read.active())[0] as boolean,
+            ]);
 
       const withdrawable =
         lp === 0n
