@@ -21,9 +21,9 @@ Here’s a well-structured **README documentation** for your `LendingPoolInterfa
 
 ---
 
-# 🧩 LendingPool Interface
+# 🧩 LendingPool
 
-The `LendingPoolInterface` defines the core functionality for a **community-backed agricultural lending protocol**.
+The `LendingPool` defines the core functionality for a **community-backed agricultural lending protocol**.
 It enables **liquidity providers (LPs)** to supply and withdraw funds, while **farmers** can borrow and repay loans using a transparent, verifiable on-chain model.
 
 This interface serves as the foundation for smart contracts that power community-driven micro-lending, designed for small-scale farmers.
