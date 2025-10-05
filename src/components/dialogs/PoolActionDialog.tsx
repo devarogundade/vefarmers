@@ -19,13 +19,13 @@ import {
   DollarSign,
   DropletsIcon,
 } from "lucide-react";
-import { Bank, BankAccount, Pool } from "@/types";
+import { Bank, BankAccount, Farmer, Pool } from "@/types";
 import { toast } from "sonner";
 import Paystack from "@paystack/inline-js";
 import { formatUnits, parseSignature, parseUnits } from "viem";
 import { lendingPoolAbi } from "@/abis/lendingPool";
 import { MAX_BPS_POW, thorClient, Symbols, Contracts } from "@/utils/constants";
-import { doc, updateDoc, getFirestore, increment } from "firebase/firestore";
+import { doc, updateDoc, getFirestore, getDoc } from "firebase/firestore";
 import timelineService from "@/services/timelineService";
 import {
   Select,
@@ -124,10 +124,14 @@ export default function PoolActionDialog({
     isTransactionPending: isRepayTransactionPending,
   } = useSendTransaction({
     signerAccountAddress: account,
-    onTxConfirmed: () => {
-      updateDoc(doc(db, "farmers", account), {
-        totalRepaid: increment(Number(amount)),
-      });
+    onTxConfirmed: async () => {
+      const docSnap = await getDoc(doc(db, "farmers", account));
+      if (docSnap.exists()) {
+        const data = docSnap.data() as Farmer;
+        updateDoc(doc(db, "farmers", account), {
+          totalRepaid: data.totalRepaid + Number(amount),
+        });
+      }
 
       timelineService.createTimelinePost(account, {
         content: `You repaid ${Symbols[pool.address]}${amount}`,
@@ -147,10 +151,14 @@ export default function PoolActionDialog({
     isTransactionPending: isBorrowTransactionPending,
   } = useSendTransaction({
     signerAccountAddress: account,
-    onTxConfirmed: () => {
-      updateDoc(doc(db, "farmers", account), {
-        totalBorrowed: increment(Number(amount)),
-      });
+    onTxConfirmed: async () => {
+      const docSnap = await getDoc(doc(db, "farmers", account));
+      if (docSnap.exists()) {
+        const data = docSnap.data() as Farmer;
+        updateDoc(doc(db, "farmers", account), {
+          totalBorrowed: data.totalBorrowed + Number(amount),
+        });
+      }
 
       timelineService.createTimelinePost(account, {
         content: `You borrowed ${Symbols[pool.address]}${amount} .`,
@@ -283,15 +291,17 @@ export default function PoolActionDialog({
             const response: ApiResponse<string> = data;
 
             if (response.success) {
-              const db = getFirestore();
+              const docSnap = await getDoc(doc(db, "farmers", account));
+              if (docSnap.exists()) {
+                const data = docSnap.data() as Farmer;
+                updateDoc(doc(db, "farmers", account), {
+                  totalRepaid: data.totalRepaid + Number(amount),
+                });
+              }
 
               await timelineService.createTimelinePost(account, {
                 content: `You repaid ${Symbols[pool.address]}${amount} from bank.`,
                 type: "activity",
-              });
-
-              await updateDoc(doc(db, "farmers", account), {
-                totalRepaid: increment(Number(amount)),
               });
 
               toast.success(response.message);
@@ -374,7 +384,8 @@ export default function PoolActionDialog({
       const { v, r, s } = parseSignature(signature as `0x${string}`);
 
       const { data } = await apiClient.post("/borrow-with-permit", {
-        v,
+        account,
+        v: Number(v),
         r,
         s,
         deadline,
@@ -383,20 +394,23 @@ export default function PoolActionDialog({
       const response: ApiResponse<string> = data;
 
       if (response.success) {
-        const db = getFirestore();
-        await updateDoc(doc(db, "farmers", account), {
-          totalBorrowed: increment(Number(amount)),
-        });
+        const docSnap = await getDoc(doc(db, "farmers", account));
+        if (docSnap.exists()) {
+          const data = docSnap.data() as Farmer;
+          updateDoc(doc(db, "farmers", account), {
+            totalBorrowed: data.totalBorrowed + Number(amount),
+          });
+        }
 
-        await timelineService.createTimelinePost(account, {
+        timelineService.createTimelinePost(account, {
           content: `You borrowed ${Symbols[pool.address]}${amount} to bank.`,
           type: "activity",
         });
 
-        toast.success("Successful", { id: "borrowWithPermit" });
+        toast.success(response.message, { id: "borrowWithPermit" });
         onClose();
       } else {
-        toast.error(response.message);
+        toast.error(response.message, { id: "borrowWithPermit" });
       }
     } catch (error) {
       toast(error?.message);
