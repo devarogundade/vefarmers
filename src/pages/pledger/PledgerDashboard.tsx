@@ -244,7 +244,7 @@ export default function PledgerDashboard() {
                       >
                         <Button variant="ghost" size="sm">
                           <ArrowUpRight className="w-4 h-4" />
-                          Pledge
+                          Pledge more
                         </Button>
                       </PledgeActionDialog>
                     </div>
