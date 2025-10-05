@@ -115,7 +115,7 @@ export default function FarmerPage() {
         </div>
       </div>
 
-      {analysis.length > 0 && (
+      {(analysis.length > 0 || isReplying) && (
         <Card className="card-hover">
           <CardHeader>
             <div className="flex items-start justify-between">
@@ -123,7 +123,6 @@ export default function FarmerPage() {
                 <BotIcon className="w-3 h-3" />
                 <span>AI Response</span>
                 <span>•</span>
-                <Calendar className="w-3 h-3" />
                 <span>Google Gemini</span>
               </div>
             </div>
