@@ -51,15 +51,17 @@ export default function PledgeActionDialog({
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      pledgesService.createPledge(account, {
-        farmerAddress: farmer.address,
-        amount: Number(amount),
-        currency: "VET",
-      });
+      if (amount) {
+        pledgesService.createPledge(account, {
+          farmerAddress: farmer.address,
+          amount: Number(amount),
+          currency: "VET",
+        });
 
-      setAmount("");
-      setIsOpen(false);
-      onClose();
+        setAmount("");
+        setIsOpen(false);
+        onClose();
+      }
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);
@@ -72,15 +74,17 @@ export default function PledgeActionDialog({
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      pledgesService.decreasePledge(account, {
-        farmerAddress: farmer.address,
-        amount: Number(amount),
-        currency: "VET",
-      });
+      if (amount) {
+        pledgesService.decreasePledge(account, {
+          farmerAddress: farmer.address,
+          amount: Number(amount),
+          currency: "VET",
+        });
 
-      setAmount("");
-      setIsOpen(false);
-      onClose();
+        setAmount("");
+        setIsOpen(false);
+        onClose();
+      }
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);

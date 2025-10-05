@@ -37,13 +37,15 @@ export default function PledgePage() {
   const { sendTransaction, isTransactionPending } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      pledgesService.createPledge(account, {
-        farmerAddress: farmerAddress as string,
-        amount: Number(pledgeAmount),
-        currency: "VET",
-      });
+      if (pledgeAmount) {
+        pledgesService.createPledge(account, {
+          farmerAddress,
+          amount: Number(pledgeAmount),
+          currency: "VET",
+        });
 
-      navigate("/pledger/dashboard");
+        navigate("/pledger/dashboard");
+      }
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);

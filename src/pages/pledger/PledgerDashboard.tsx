@@ -229,6 +229,7 @@ export default function PledgerDashboard() {
                       >
                         <Button variant="ghost" size="sm">
                           <ArrowDownLeft className="w-4 h-4" />
+                          Withdraw
                         </Button>
                       </PledgeActionDialog>
                       <PledgeActionDialog
@@ -241,6 +242,7 @@ export default function PledgerDashboard() {
                       >
                         <Button variant="ghost" size="sm">
                           <ArrowUpRight className="w-4 h-4" />
+                          Pledge
                         </Button>
                       </PledgeActionDialog>
                     </div>

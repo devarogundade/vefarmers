@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Pool } from "@/types";
 import { poolsService } from "@/services/poolsService";
 
@@ -23,7 +23,7 @@ export function usePools(account: string): UsePoolsReturn {
     error: null,
   });
 
-  const fetchPools = useCallback(async (account: string) => {
+  const fetchPools = async (account: string) => {
     try {
       const response = await poolsService.getPools(account);
 
@@ -48,18 +48,15 @@ export function usePools(account: string): UsePoolsReturn {
         loading: false,
       }));
     }
-  }, []);
+  };
 
-  const generateChartData = useCallback(
-    (supplyApy: number, days: number = 30) => {
-      return poolsService.generatePoolChartData(supplyApy, days);
-    },
-    []
-  );
+  const generateChartData = (supplyApy: number, days: number = 30) => {
+    return poolsService.generatePoolChartData(supplyApy, days);
+  };
 
   useEffect(() => {
     fetchPools(account);
-  }, [account, fetchPools]);
+  }, []);
 
   return {
     ...state,
@@ -85,7 +82,7 @@ export function usePool(address: string, account?: string): UsePoolReturn {
     error: null,
   });
 
-  const fetchPool = useCallback(async () => {
+  const fetchPool = async () => {
     if (!address) return;
 
     try {
@@ -112,11 +109,11 @@ export function usePool(address: string, account?: string): UsePoolReturn {
         loading: false,
       }));
     }
-  }, [address, account]);
+  };
 
   useEffect(() => {
     fetchPool();
-  }, [fetchPool]);
+  }, []);
 
   return {
     ...state,

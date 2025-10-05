@@ -87,13 +87,15 @@ export default function PoolActionDialog({
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      timelineService.createTimelinePost(account, {
-        content: `You supplied ${Symbols[pool.address]}${amount}.`,
-        type: "activity",
-      });
+      if (amount) {
+        timelineService.createTimelinePost(account, {
+          content: `You supplied ${Symbols[pool.address]}${amount}.`,
+          type: "activity",
+        });
 
-      toast.success("Transaction confirmed.", { id: action });
-      onClose();
+        toast.success("Transaction confirmed.", { id: action });
+        onClose();
+      }
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);
@@ -106,13 +108,15 @@ export default function PoolActionDialog({
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: () => {
-      timelineService.createTimelinePost(account, {
-        content: `You withdraw ${Symbols[pool.address]}${amount} .`,
-        type: "activity",
-      });
+      if (amount) {
+        timelineService.createTimelinePost(account, {
+          content: `You withdraw ${Symbols[pool.address]}${amount}.`,
+          type: "activity",
+        });
 
-      toast.success("Transaction confirmed.", { id: action });
-      onClose();
+        toast.success("Transaction confirmed.", { id: action });
+        onClose();
+      }
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);
@@ -125,21 +129,23 @@ export default function PoolActionDialog({
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: async () => {
-      const docSnap = await getDoc(doc(db, "farmers", account));
-      if (docSnap.exists()) {
-        const data = docSnap.data() as Farmer;
-        updateDoc(doc(db, "farmers", account), {
-          totalRepaid: data.totalRepaid + Number(amount),
+      if (amount) {
+        const docSnap = await getDoc(doc(db, "farmers", account));
+        if (docSnap.exists()) {
+          const data = docSnap.data() as Farmer;
+          updateDoc(doc(db, "farmers", account), {
+            totalRepaid: data.totalRepaid + Number(amount),
+          });
+        }
+
+        timelineService.createTimelinePost(account, {
+          content: `You repaid ${Symbols[pool.address]}${amount}`,
+          type: "activity",
         });
+
+        toast.success("Transaction confirmed.", { id: action });
+        onClose();
       }
-
-      timelineService.createTimelinePost(account, {
-        content: `You repaid ${Symbols[pool.address]}${amount}`,
-        type: "activity",
-      });
-
-      toast.success("Transaction confirmed.", { id: action });
-      onClose();
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);
@@ -152,21 +158,23 @@ export default function PoolActionDialog({
   } = useSendTransaction({
     signerAccountAddress: account,
     onTxConfirmed: async () => {
-      const docSnap = await getDoc(doc(db, "farmers", account));
-      if (docSnap.exists()) {
-        const data = docSnap.data() as Farmer;
-        updateDoc(doc(db, "farmers", account), {
-          totalBorrowed: data.totalBorrowed + Number(amount),
+      if (amount) {
+        const docSnap = await getDoc(doc(db, "farmers", account));
+        if (docSnap.exists()) {
+          const data = docSnap.data() as Farmer;
+          updateDoc(doc(db, "farmers", account), {
+            totalBorrowed: data.totalBorrowed + Number(amount),
+          });
+        }
+
+        timelineService.createTimelinePost(account, {
+          content: `You borrowed ${Symbols[pool.address]}${amount} .`,
+          type: "activity",
         });
+
+        toast.success("Transaction confirmed.", { id: action });
+        onClose();
       }
-
-      timelineService.createTimelinePost(account, {
-        content: `You borrowed ${Symbols[pool.address]}${amount} .`,
-        type: "activity",
-      });
-
-      toast.success("Transaction confirmed.", { id: action });
-      onClose();
     },
     onTxFailedOrCancelled: (error) => {
       toast.error(typeof error == "string" ? error : error?.message);

@@ -84,7 +84,7 @@ export class PledgesService {
             location: farmerResponse.data.location,
             farmSize: farmerResponse.data.farmSize,
             cropType: farmerResponse.data.cropType,
-            verified: false,
+            verified: farmerResponse.data.verified,
           },
         });
 
@@ -106,7 +106,7 @@ export class PledgesService {
             location: farmerResponse.data.location,
             farmSize: farmerResponse.data.farmSize,
             cropType: farmerResponse.data.cropType,
-            verified: false,
+            verified: farmerResponse.data.verified,
           },
           amount: pledgeData.amount,
           currency: pledgeData.currency,

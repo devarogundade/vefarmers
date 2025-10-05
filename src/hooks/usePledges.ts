@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Pledge } from "@/types";
 import { pledgesService } from "@/services/pledgesService";
 import { PledgeFilters, PledgeRequest } from "@/types/api";
@@ -24,9 +24,11 @@ export function usePledges(filters?: PledgeFilters): UsePledgesReturn {
     error: null,
   });
 
-  const fetchPledges = useCallback(async () => {
+  const fetchPledges = async () => {
     try {
       const response = await pledgesService.getPledges(filters);
+
+      console.log("dx:'aa");
 
       if (response.success) {
         setState((prev) => ({
@@ -49,41 +51,38 @@ export function usePledges(filters?: PledgeFilters): UsePledgesReturn {
         loading: false,
       }));
     }
-  }, [filters]);
+  };
 
-  const createPledge = useCallback(
-    async (
-      pledgeAddress: string,
-      pledgeData: PledgeRequest
-    ): Promise<Pledge | null> => {
-      try {
-        const response = await pledgesService.createPledge(
-          pledgeAddress,
-          pledgeData
-        );
+  const createPledge = async (
+    pledgeAddress: string,
+    pledgeData: PledgeRequest
+  ): Promise<Pledge | null> => {
+    try {
+      const response = await pledgesService.createPledge(
+        pledgeAddress,
+        pledgeData
+      );
 
-        if (response.success) {
-          return response.data;
-        } else {
-          setState((prev) => ({
-            ...prev,
-            error: response.message || "Failed to create pledge",
-          }));
-          return null;
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to create pledge";
-        setState((prev) => ({ ...prev, error: errorMessage }));
+      if (response.success) {
+        return response.data;
+      } else {
+        setState((prev) => ({
+          ...prev,
+          error: response.message || "Failed to create pledge",
+        }));
         return null;
       }
-    },
-    []
-  );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create pledge";
+      setState((prev) => ({ ...prev, error: errorMessage }));
+      return null;
+    }
+  };
 
   useEffect(() => {
     fetchPledges();
-  }, [fetchPledges]);
+  }, []);
 
   return {
     ...state,

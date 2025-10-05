@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Farmer } from "../types";
 import { farmersService } from "../services/farmersService";
 import { FarmerFilters, CreateFarmerRequest } from "../types/api";
@@ -25,7 +25,7 @@ export function useFarmers(filters?: FarmerFilters): UseFarmersReturn {
     error: null,
   });
 
-  const fetchFarmers = useCallback(async () => {
+  const fetchFarmers = async () => {
     try {
       const response = await farmersService.getFarmers(filters);
 
@@ -50,43 +50,40 @@ export function useFarmers(filters?: FarmerFilters): UseFarmersReturn {
         loading: false,
       }));
     }
-  }, [filters]);
+  };
 
-  const createFarmer = useCallback(
-    async (
-      address: string,
-      pledgeManager: string,
-      farmerData: CreateFarmerRequest
-    ): Promise<Farmer | null> => {
-      try {
-        const response = await farmersService.createFarmer(
-          address,
-          pledgeManager,
-          farmerData
-        );
+  const createFarmer = async (
+    address: string,
+    pledgeManager: string,
+    farmerData: CreateFarmerRequest
+  ): Promise<Farmer | null> => {
+    try {
+      const response = await farmersService.createFarmer(
+        address,
+        pledgeManager,
+        farmerData
+      );
 
-        if (response.success) {
-          return response.data;
-        } else {
-          setState((prev) => ({
-            ...prev,
-            error: response.message || "Failed to create farmer",
-          }));
-          return null;
-        }
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Failed to create farmer";
-        setState((prev) => ({ ...prev, error: errorMessage }));
+      if (response.success) {
+        return response.data;
+      } else {
+        setState((prev) => ({
+          ...prev,
+          error: response.message || "Failed to create farmer",
+        }));
         return null;
       }
-    },
-    []
-  );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create farmer";
+      setState((prev) => ({ ...prev, error: errorMessage }));
+      return null;
+    }
+  };
 
   useEffect(() => {
     fetchFarmers();
-  }, [fetchFarmers]);
+  }, []);
 
   return {
     ...state,
@@ -112,7 +109,7 @@ export function useFarmer(address: string): UseFarmerReturn {
     error: null,
   });
 
-  const fetchFarmer = useCallback(async () => {
+  const fetchFarmer = async () => {
     if (!address) return;
 
     try {
@@ -139,11 +136,11 @@ export function useFarmer(address: string): UseFarmerReturn {
         loading: false,
       }));
     }
-  }, [address]);
+  };
 
   useEffect(() => {
     fetchFarmer();
-  }, [fetchFarmer]);
+  }, []);
 
   return {
     ...state,
