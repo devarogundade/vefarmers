@@ -30,9 +30,6 @@ const provider = new VeChainProvider(
   thorClient,
   new ProviderInternalBaseWallet([deployerAccount])
 );
-const signer = (await provider.getSigner(
-  deployerAccount.address
-)) as VeChainSigner;
 
 async function mint(
   fiat: string,
@@ -40,6 +37,10 @@ async function mint(
   to: string
 ): Promise<ApiResponse<string>> {
   try {
+    const signer = (await provider.getSigner(
+      deployerAccount.address
+    )) as VeChainSigner;
+
     const contract = thorClient.contracts.load(fiat, fiatAbi, signer);
     const txResult = await contract.transact.mint(to, amount);
 
@@ -74,6 +75,10 @@ async function burn(
   to: string
 ): Promise<ApiResponse<string>> {
   try {
+    const signer = (await provider.getSigner(
+      deployerAccount.address
+    )) as VeChainSigner;
+
     const contract = thorClient.contracts.load(fiat, fiatAbi, signer);
     const txResult = await contract.transact.burn(to, amount);
 
@@ -108,6 +113,10 @@ async function approve(
   spender: string
 ): Promise<ApiResponse<string>> {
   try {
+    const signer = (await provider.getSigner(
+      deployerAccount.address
+    )) as VeChainSigner;
+
     const contract = thorClient.contracts.load(fiat, fiatAbi, signer);
     const txResult = await contract.transact.approve(spender, amount);
 
@@ -140,6 +149,10 @@ async function supply(
   behalfOf: string
 ): Promise<ApiResponse<string>> {
   try {
+    const signer = (await provider.getSigner(
+      deployerAccount.address
+    )) as VeChainSigner;
+
     const contract = thorClient.contracts.load(pool, lendingPoolAbi, signer);
     const txResult = await contract.transact.supply(amount, behalfOf);
 
@@ -172,6 +185,10 @@ async function repay(
   behalfOf: string
 ): Promise<ApiResponse<string>> {
   try {
+    const signer = (await provider.getSigner(
+      deployerAccount.address
+    )) as VeChainSigner;
+
     const contract = thorClient.contracts.load(pool, lendingPoolAbi, signer);
     const txResult = await contract.transact.repay(amount, behalfOf);
 

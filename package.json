@@ -1,7 +1,7 @@
 {
   "name": "smart-contracts",
   "version": "1.0.0",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "vite --port 3000 --force",
     "build": "tsc -b && vite build",
@@ -9,10 +9,12 @@
     "prettier": "prettier --write .",
     "preview": "vite preview",
     "test": "npm run build && vitest run --coverage",
-    "server": "tsx backend/index.ts",
+    "dev:server": "tsx backend/index.ts",
     "build:contracts": "npx hardhat compile",
     "deploy:testnet": "npx hardhat run scripts/deploy.js --network vechain_testnet",
-    "set_reward_rate:testnet": "npx hardhat run scripts/set_reward_rate.js --network vechain_testnet"
+    "set_reward_rate:testnet": "npx hardhat run scripts/set_reward_rate.js --network vechain_testnet",
+    "build:server": "cd backend && npx tsc -p tsconfig.json",
+    "pm2:server": "node backend/dist/index.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
